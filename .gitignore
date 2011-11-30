@@ -1,5 +1,5 @@
 *.o
 *.obj
 build/*
-./demo
+demo
 demo.exe

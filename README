@@ -3,6 +3,10 @@ port to NDS (via the libnds API) of my 3d platformer engine, "clown3d".
 The source here was forked from the November 12, 2011 snapshot of 
 clown3d.
 
+It's worth mentioning:
+The compiled ROM file is included here; it's "clown3d-DS.nds".
+Also there is an early screenshot, "wip-screenshot.PNG".
+
 The first phase of porting involved decreasing the
 vertex count of all the models to make them "fit" on
 the DS' limited GPU; I also made sure the engine's RAM
@@ -11,7 +15,10 @@ Finally, I had to store model files as char[]'s in source
 files (could have been header files, more typical) and
 implement a reader (string-read.c) because
 you don't usually have a filesystem available on NDS.
-(the data-source directory contains the low-poly model files).
+(i.e. model data is stored directly as text in the game ROM.
+the data-source directory contains the low-poly model files,
+which are "compiled" to source files [*-mdl.c] via the "data2src"
+script/program).
 
 I then copy-pasted libnds 3D example code by Dovoto to
 start porting to the libnds pseudo-GL API (and DS buttons,

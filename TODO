@@ -1,3 +1,5 @@
+[+ = done, - = not done]
+
 + Good low-poly map
 + Low-poly player; optimized again
 + Store datafiles in sourcefiles !
@@ -17,8 +19,10 @@
   (small) range. A workaround for this quirk was added to
   model-draw.c; use drawModelWithGL_big(model*) to use this
   fixed version.
+
 - Faster code / optimize
-	* key model seems to be the [performance] culprit
+	* key model seems to be the [performance] culprit.
+	  will have to decrease vertex count all over again...
 - Add lighting/shininess/antialiasing/you-name-it effects
   to make things nicer
 
