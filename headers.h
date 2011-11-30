@@ -4,7 +4,8 @@
 #ifndef ALLHEADERS
 #define ALLHEADERS
 
-#define malloc malloc_check
+/* for RAM usage checking on PC build */
+/* #define malloc malloc_check */
 
 extern int vc;
 
