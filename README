@@ -1,0 +1,34 @@
+This is an *extremely work-in-progress*, non-finalized 
+port to NDS (via the libnds API) of my 3d platformer engine, "clown3d". 
+The source here was forked from the November 12, 2011 snapshot of 
+clown3d.
+
+The first phase of porting involved decreasing the
+vertex count of all the models to make them "fit" on
+the DS' limited GPU; I also made sure the engine's RAM
+usage didn't exceed the DS' limit (4 MB, I think).
+Finally, I had to store model files as char[]'s in source
+files (could have been header files, more typical) and
+implement a reader (string-read.c) because
+you don't usually have a filesystem available on NDS.
+(the data-source directory contains the low-poly model files).
+
+I then copy-pasted libnds 3D example code by Dovoto to
+start porting to the libnds pseudo-GL API (and DS buttons,
+timing, etc.)
+
+Following that, several quirks in libnds had to be worked
+around.
+
+Right now, I'm still trying to improve the graphics and
+optimize the code. I have yet to test the program on a
+real console.
+
+--------------------------------------------------------------
+
+Note that the current clown3D-ds can still be built for the
+PC using either Makefile.pc or mingw-build.bat; to build the
+libnds version use Makefile. The PC build shows a vertex count
+and (optionally, see main.c) a RAM usage estimation.
+
+

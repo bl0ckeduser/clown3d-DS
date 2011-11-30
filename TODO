@@ -1,0 +1,25 @@
++ Good low-poly map
++ Low-poly player; optimized again
++ Store datafiles in sourcefiles !
+  System for this set up. See data2src.sh script !
++ Why doesn't the player model ("turtle") appear ???!
+  Fixed. read_float returned an int o_O
++ Low-poly and map-included bullets, keys, doors
++ Uses only about 42 KB of program (i.e. not video) RAM
+  Also the model data only uses about 50 KB of ROM.
++ Ported to libnds (define PC_TARGET to build with SDL/GL,
+   don't define it to build with libnds)
++ Works at 30 FPS regardless of platform; on DS, it's
+  also VSync'd to this. (60 FPS is hard ! Famous programmer 
+  John Carmack said so in some article).
++ The world map is messed up ! I have no idea why !
+  Bug fixed: glVertex3f only accepts coordinates in a certain
+  (small) range. A workaround for this quirk was added to
+  model-draw.c; use drawModelWithGL_big(model*) to use this
+  fixed version.
+- Faster code / optimize
+	* key model seems to be the [performance] culprit
+- Add lighting/shininess/antialiasing/you-name-it effects
+  to make things nicer
+
+

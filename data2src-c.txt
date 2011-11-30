@@ -1,0 +1,13 @@
+#include <stdio.h>
+int main(int argc, char** argv)
+{
+	char c;
+	printf("char %s[] = \"", argv[1]);
+	while(!feof(stdin)){
+		c = getchar();
+		if(c=='\n')	printf(" \\");
+		putchar(c);
+	}
+	printf("\";\n");
+	return 0;
+}
