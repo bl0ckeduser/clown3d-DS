@@ -489,26 +489,3 @@ void runGameFrame(void)
 
 	gc_collect();
 }
-
-#ifndef PC_TARGET
-
-/* The following routines were copied from
-   nehe11.cpp, written by Dovoto, and renamed
-   from sin, cos to my_sin, my_cos because
-   it didn't seem to build otherwise */
-
-float my_sin(float angle)
-{
-	int32 s = sinLerp((int)((angle * DEGREES_IN_CIRCLE) / 360.0));
-
-	return f32tofloat(s);
-}
-
-float my_cos(float angle)
-{
-	int32 c = cosLerp((int)((angle * DEGREES_IN_CIRCLE) / 360.0));
-
-	return f32tofloat(c);
-}
-
-#endif
