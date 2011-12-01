@@ -83,8 +83,8 @@ void playerTick(game_obj* player)
 #ifdef PC_TARGET
 	shoot = keystate[SDLK_s];
 	jump = keystate[SDLK_z];
-	left = keystate[SDLK_LEFT];
-	right = keystate[SDLK_RIGHT];
+	left = keystate[SDLK_RIGHT];
+	right = keystate[SDLK_LEFT];
 	down = keystate[SDLK_DOWN];
 	up = keystate[SDLK_UP];
 #else
@@ -94,8 +94,8 @@ void playerTick(game_obj* player)
 	u16 keys = keysHeld();
 	shoot = (keys & KEY_A);
 	jump = (keys & KEY_B);
-	left = (keys & KEY_LEFT);
-	right = (keys & KEY_RIGHT);
+	left = (keys & KEY_RIGHT);
+	right = (keys & KEY_LEFT);
 	down = (keys & KEY_DOWN);
 	up = (keys & KEY_UP);
 #endif
