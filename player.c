@@ -30,13 +30,12 @@ void playerInit(game_obj* a)
 
 void playerTick(game_obj* player)
 {
-	#ifndef PC_TARGET
+	/* platform independent controller bits */
 	int up, down, left, right, shoot, jump;
-	#endif
 
-        player->data[PLAYER_MOVEX] = 0.0;
-        player->data[PLAYER_MOVEY] = 0.0;
-        player->data[PLAYER_MOVEZ] = 0.0;
+      player->data[PLAYER_MOVEX] = 0.0;
+      player->data[PLAYER_MOVEY] = 0.0;
+      player->data[PLAYER_MOVEZ] = 0.0;
 
 	if(player->data[PLAYER_YVEL] < -MAX_YVEL)
 		player->data[PLAYER_YVEL] = -MAX_YVEL;
@@ -76,116 +75,90 @@ void playerTick(game_obj* player)
 	if(player->data[PLAYER_ANGLE] > 360)
 		player->data[PLAYER_ANGLE] = 0;
 
-	if(!(intro_offset > 0) && !(yoffs > 20)) {
-		/*
-		 * Player rotation and
-		 * walking are linear with
-		 * respect to time, so
-		 * we just multiply by
-		 * delta time to
-		 * time-correct.
-		 */
+	/* Limit the frequency at which the player
+	   can shoot bullets */
+	if(player->data[PLAYER_BULLET_TIMER] >= 0.0f)
+		player->data[PLAYER_BULLET_TIMER] -= 15 * dtime;
 
-		if(player->data[PLAYER_BULLET_TIMER] >= 0.0f)
-			player->data[PLAYER_BULLET_TIMER] -= 15 * dtime;
+#ifdef PC_TARGET
+	shoot = keystate[SDLK_s];
+	jump = keystate[SDLK_z];
+	left = keystate[SDLK_LEFT];
+	right = keystate[SDLK_RIGHT];
+	down = keystate[SDLK_DOWN];
+	up = keystate[SDLK_UP];
+#else
+	/* NDS key handling code below copied and adapted
+	   from an example by Dovoto */
+	scanKeys();
+	u16 keys = keysHeld();
+	shoot = (keys & KEY_A);
+	jump = (keys & KEY_B);
+	left = (keys & KEY_LEFT);
+	right = (keys & KEY_RIGHT);
+	down = (keys & KEY_DOWN);
+	up = (keys & KEY_UP);
+#endif
 
-		#ifdef PC_TARGET
-		if(keystate[SDLK_s] && player->data[PLAYER_BULLET_TIMER] <= 0.1f)
-		{
-			player->data[PLAYER_BULLET_TIMER] = 25.0;
-			newBullet(player, player->data[PLAYER_X],
-				player->data[PLAYER_Y],
-				player->data[PLAYER_Z],
-				player->data[PLAYER_ANGLE]);
-		}
+	/*
+	 * Player rotation and
+	 * walking are linear with
+	 * respect to time, so
+	 * we just multiply by
+	 * delta time to
+	 * time-correct.
+	 */
 
-		if(keystate[SDLK_LEFT])
-			player->data[PLAYER_ANGLE] -= 9.0 * dtime;
+	if(shoot && player->data[PLAYER_BULLET_TIMER] <= 0.1f)
+	{
+		player->data[PLAYER_BULLET_TIMER] = 25.0;
+		newBullet(player, player->data[PLAYER_X],
+			player->data[PLAYER_Y],
+			player->data[PLAYER_Z],
+			player->data[PLAYER_ANGLE]);
+	}
 
-		if(keystate[SDLK_RIGHT])
-			player->data[PLAYER_ANGLE] += 9.0 * dtime;
+	if(left)
+		player->data[PLAYER_ANGLE] -= 9.0 * dtime;
 
-		if(keystate[SDLK_UP]) {
-			player->data[PLAYER_MOVEX] = 7.5 * 
-				player->data[PLAYER_DIRX] * dtime;
-			player->data[PLAYER_MOVEZ] = 7.5 * 
-				player->data[PLAYER_DIRZ] * dtime;
-		}
+	if(right)
+		player->data[PLAYER_ANGLE] += 9.0 * dtime;
 
-		if(keystate[SDLK_DOWN]) {
-			player->data[PLAYER_MOVEX] = -7 * 
-				player->data[PLAYER_DIRX] * dtime;
-			player->data[PLAYER_MOVEZ] = -7 * 
-				player->data[PLAYER_DIRZ] * dtime;
-		}
+	if(up) {
+		player->data[PLAYER_MOVEX] = 7.5 * 
+			player->data[PLAYER_DIRX] * dtime;
+		player->data[PLAYER_MOVEZ] = 7.5 * 
+			player->data[PLAYER_DIRZ] * dtime;
+	}
 
-		if(keystate[SDLK_z] && player->data[PLAYER_ON_PLATFORM])
-			player->data[PLAYER_YVEL] = MAX_YVEL;
-		#else
-		/* key handling code below essentially pasted 
-		   from nds-examples\Graphics\3D\Simple_Quad */
-		scanKeys();
-		u16 keys = keysHeld();
-		shoot = (keys & KEY_A);
-		jump = (keys & KEY_B);
-		left = (keys & KEY_LEFT);
-		right = (keys & KEY_RIGHT);
-		down = (keys & KEY_DOWN);
-		up = (keys & KEY_UP);
+	if(down) {
+		player->data[PLAYER_MOVEX] = -7 * 
+			player->data[PLAYER_DIRX] * dtime;
+		player->data[PLAYER_MOVEZ] = -7 * 
+			player->data[PLAYER_DIRZ] * dtime;
+	}
 
-		if(shoot && player->data[PLAYER_BULLET_TIMER] <= 0.1f)
-		{
-			player->data[PLAYER_BULLET_TIMER] = 25.0;
-			newBullet(player, player->data[PLAYER_X],
-				player->data[PLAYER_Y],
-				player->data[PLAYER_Z],
-				player->data[PLAYER_ANGLE]);
-		}
-
-		if(left)
-			player->data[PLAYER_ANGLE] -= 9.0 * dtime;
-
-		if(right)
-			player->data[PLAYER_ANGLE] += 9.0 * dtime;
-
-		if(up) {
-			player->data[PLAYER_MOVEX] = 7.5 * 
-				player->data[PLAYER_DIRX] * dtime;
-			player->data[PLAYER_MOVEZ] = 7.5 * 
-				player->data[PLAYER_DIRZ] * dtime;
-		}
-
-		if(down) {
-			player->data[PLAYER_MOVEX] = -7 * 
-				player->data[PLAYER_DIRX] * dtime;
-			player->data[PLAYER_MOVEZ] = -7 * 
-				player->data[PLAYER_DIRZ] * dtime;
-		}
-
-		if(jump && player->data[PLAYER_ON_PLATFORM])
-		{
-			player->data[PLAYER_YVEL] = MAX_YVEL;
-		}
-		#endif
-
+	if(jump && player->data[PLAYER_ON_PLATFORM])
+	{
+		player->data[PLAYER_YVEL] = MAX_YVEL;
 	}
 
 	player->data[PLAYER_ON_PLATFORM]  = 0.0;
 
-        player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
-        player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
-        player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
+      player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
+      player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
+      player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
 
-        /* Player collision box and movement vector */
-        player->box.min.x = (float)(player->data[PLAYER_X] - 10);
-        player->box.min.y = (float)(player->data[PLAYER_Y] - 10);
-        player->box.min.z = (float)(player->data[PLAYER_Z] - 10);
-        player->box.max.x = (float)(player->data[PLAYER_X] + 10);
-        player->box.max.y = (float)(player->data[PLAYER_Y] + 10);
-        player->box.max.z = (float)(player->data[PLAYER_Z] + 10);
-        player->box.move.x = (float)player->data[PLAYER_MOVEX];
-        player->box.move.y = (float)player->data[PLAYER_MOVEY];
-        player->box.move.z = (float)player->data[PLAYER_MOVEZ];
+      /* Player collision box and movement vector */
+      player->box.min.x = (float)(player->data[PLAYER_X] - 10);
+      player->box.min.y = (float)(player->data[PLAYER_Y] - 10);
+      player->box.min.z = (float)(player->data[PLAYER_Z] - 10);
+      player->box.max.x = (float)(player->data[PLAYER_X] + 10);
+      player->box.max.y = (float)(player->data[PLAYER_Y] + 10);
+      player->box.max.z = (float)(player->data[PLAYER_Z] + 10);
+      player->box.move.x = (float)player->data[PLAYER_MOVEX];
+      player->box.move.y = (float)player->data[PLAYER_MOVEY];
+      player->box.move.z = (float)player->data[PLAYER_MOVEZ];
 
 }
 
@@ -230,7 +203,6 @@ void playerDraw(game_obj* player)
 {
         if(cam_angle != 2) {
                 /* Draw the player model */
-               // glLoadIdentity();
                 glTranslatef((GLfloat)player->data[PLAYER_X]/10.0f, (GLfloat)player->data[PLAYER_Y]/10.0f,
                              (GLfloat)player->data[PLAYER_Z]/10.0f);
                 glScalef(2, 2, 2);              /* older rescale model */

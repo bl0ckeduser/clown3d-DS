@@ -46,10 +46,10 @@ void targetCollide(game_obj* a, game_obj* b)
 void targetDraw(game_obj* targ)
 {
 	if(targ->data[TARGET_EXPLODED])	return;
-                glLoadIdentity();
-                glTranslatef((GLfloat)targ->data[TARGET_X]/10.0f, (GLfloat)targ->data[TARGET_Y]/10.0f,
+
+	glTranslatef((GLfloat)targ->data[TARGET_X]/10.0f, (GLfloat)targ->data[TARGET_Y]/10.0f,
                              (GLfloat)targ->data[TARGET_Z]/10.0f);
-		glScalef(0.1f, 0.1f, 0.1f);
-                glRotatef(targ->data[TARGET_ANGLE], 0.0f, 1.0f, 0.0f);
-                drawModelWithGL(targetModel);
+	glScalef(0.1f, 0.1f, 0.1f);
+	glRotatef(targ->data[TARGET_ANGLE], 0.0f, 1.0f, 0.0f);
+	drawModelWithGL(targetModel);
 }

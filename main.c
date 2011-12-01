@@ -32,7 +32,6 @@ extern char bullet_model[];
 #include "headers.h"
 
 int vc;
-int bullets = 0;
 
 #ifdef PC_TARGET
 /* SDL event structures */
@@ -59,18 +58,29 @@ GLfloat ambient_light[] = { 0.5, 0.5, 0.5, 1.0 };
 /* materials */
 GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
 
-/* variable FPS physics -- time corrector */
-float dtime;
-
-/* Intro camera movement offset */
-float intro_offset = 0.0/* 100 */;
+/* Here, everything runs at a constant 30 FPS,
+   however the clown3d engine is designed 
+   for variable FPS */
+float dtime = (1000.0f / 30.0f) * TIME_UNIT / 1000.0;
 
 /* Camera angle, offset */
 int cam_angle = 1;
 float yoffs = /* 83.0 */20.0;
 
-
 void runGameFrame(void);
+
+/* This adresses a quirk in libnds.
+   The official GL version of glPopMatrix
+   requires no parameters, but the libnds
+   version has one parameter */
+void PopMatrix(void)
+{
+	#ifdef PC_TARGET
+	glPopMatrix();
+	#else
+	glPopMatrix(1);	/* copied from Dovoto */
+	#endif
+}
 
 /*
  * bunch of pseudo-OOP stuff follows
@@ -201,7 +211,7 @@ int main(int argc, char* argv[])
 	keyModel = loadModel(key_model);
 	printf("done.\n");
 
-	printf("Creating world... ");
+	printf("Creating world objects... ");
 	objs = newList();
 	player = newPlayer(objs, 0, 20, 0);
 	(void)newDoor(objs, -7.456112, -2.289094, -124.128632);
@@ -225,24 +235,9 @@ int main(int argc, char* argv[])
 		video_info = (SDL_VideoInfo *)SDL_GetVideoInfo();
 
 		display = SDL_SetVideoMode(
-		              640, 480,
-		              video_info -> vfmt -> BitsPerPixel,
-		              SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL
-				|
-				(argc > 1 ?
-					(argc > 2 ?
-						(strcmp(argv[2], "-f")==0 ?
-							SDL_FULLSCREEN
-							: 0
-						)
-						: (strcmp(argv[1], "-f")==0 ?
-							SDL_FULLSCREEN
-							: 0
-						)
-					)
-					: 0
-				)
-			);
+		          640, 480,
+		          video_info -> vfmt -> BitsPerPixel,
+		          SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
 
 		require(display != NULL);
 	#else
@@ -250,27 +245,26 @@ int main(int argc, char* argv[])
 	#endif
 
 		#ifndef PC_TARGET
-			/* 
-			   initialization taken copied from
-			   Graphics/3D/nehe/lesson03/source/nehe3.cpp
-			   by Dovoto
-			*/
-				// Setup the Main screen for 3D 
-				videoSetMode(MODE_0_3D);
+		/* 
+		   NDS 3D mode init code copied from
+		   nehe3.cpp by Dovoto
+		*/
+		// Setup the Main screen for 3D 
+		videoSetMode(MODE_0_3D);
     
-				// initialize the geometry engine
-				glInit();
+		// initialize the geometry engine
+		glInit();
     
-				// enable antialiasing
-				glEnable(GL_ANTIALIAS);
+		// enable antialiasing
+		glEnable(GL_ANTIALIAS);
     
-				// setup the rear plane
-				glClearColor(0,0,0,31); // BG must be opaque for AA to work
-				glClearPolyID(63); // BG must have a unique polygon ID for AA to work
-				glClearDepth(GL_MAX_DEPTH);
-    
-				// Set our viewport to be the same size as the screen
-				glViewport(0,0,255,191);
+		// setup the rear plane
+		glClearColor(0,0,0,31); // BG must be opaque for AA to work
+		glClearPolyID(63); // BG must have a unique polygon ID for AA to work
+		glClearDepth(GL_MAX_DEPTH);
+  
+		// Set our viewport to be the same size as the screen
+		glViewport(0,0,255,191);
 		#endif
 
 		#ifdef PC_TARGET
@@ -279,37 +273,27 @@ int main(int argc, char* argv[])
 		   slightly different GL. Also, I'm not sure
 		   whether the DS supports all these effects. */
 	
-		/* Enable Z-buffering, lighting */
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 
-		/* Switch lights on */
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 
-		/* Allow lit colors */
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		/* Avoid scaled normals pitfall */
 		glEnable(GL_NORMALIZE);
-
-		/* ================== Constant lighting and materials ==================== */
 
 		light_position[0] = light_position[2] = 0.0f;
 		light_position[1] = 60.0f;
 
-		/* light 0 - ambient */
 		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
 
-		/* the material everything is made of */
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
 
-		/* light 1 - diffuse */
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse_light);
 
-		/* ======================================================================= */
 		#endif
 
 		while(1) {
@@ -326,11 +310,10 @@ int main(int argc, char* argv[])
 			LimitFPS(30);
 			SDL_GL_SwapBuffers();
 			#else
-				/* framerate code based on Dovoto's examples */
-				// flush to screen  
-        			glFlush(0);
-				swiWaitForVBlank();
-				swiWaitForVBlank();		/* 30 fps */
+			/* framerate sync code based on Dovoto's examples */
+        		glFlush(0);
+			swiWaitForVBlank();
+			swiWaitForVBlank();		/* 30 fps */
 			#endif
 		}
 
@@ -347,10 +330,7 @@ int main(int argc, char* argv[])
 		freeModel(bulletModel);
 		freeModel(doorModel);
 		freeModel(keyModel);
-		
-		/*
-			freeModel(targetModel);
-		*/
+		/* freeModel(targetModel); */
 
 		gc_stop();
 
@@ -367,42 +347,33 @@ int main(int argc, char* argv[])
 
 void runGameFrame(void)
 {
-	static int trace = 0;
 
-	/****************** COMPUTE DTIME ***************/
-
-	/* assume 30 FPS */
-	dtime = (1000.0f / 30.0f) * TIME_UNIT / 1000.0;
-
-	/************************************************/
-
-	/***** TICK OBJECTS *********/
+	/* 
+	 * Tick game objects and resolve collisions 
+	 */
 
 	for(node = objs; node; node = node->next)
 		tickFunction(node);
 
-	/****************************/
-
-	/***** RESOLVE ALL COLLISIONS *******/
-
 	resolveCollisions(objs, collisionFunction);
 
-	/***********************************/
 
-	/********* DRAW EVERYTHING ON THE SCREEN *********/
+	/*
+	 * Drawing code follows 
+	 */
 
 	#ifdef PC_TARGET
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	/* on NDS, glClear() is used earlier on */
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 	#endif
 
 	/* Setup the camera */
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	#ifdef PC_TARGET
-	gluPerspective(60.0f, (GLdouble)640.0f/480.0f, 0.1f, 100.0f);
+	gluPerspective(60.0f, 640.0f/480.0f, 0.1f, 100.0f);
 	#else
 	gluPerspective(60.0f, 255.0f/192.0f, 0.1f, 100.0f);
-	glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE);	/* again, strongly based on Dovoto's code */
+	glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE);	/* copied from Dovoto */
 	#endif
 
 	glMatrixMode(GL_MODELVIEW);
@@ -410,12 +381,12 @@ void runGameFrame(void)
 
 	switch(cam_angle) {
 	case 1:		/* camera placed at constant distance of player.
-				   coords are calculated from the player by adding
-				   a scaled version of the opposite of the X, Z direction
-				   vector */
-		gluLookAt((float)(player->data[PLAYER_X] - player->data[PLAYER_DIRX]*(60+intro_offset))/10.0,
+			   coords are calculated from the player by adding
+			   a scaled version of the opposite of the X, Z direction
+			   vector */
+		gluLookAt((float)(player->data[PLAYER_X] - player->data[PLAYER_DIRX]*(60))/10.0,
 		          (float)(player->data[PLAYER_Y]+yoffs)/10.0,
-		          (float)(player->data[PLAYER_Z]-player->data[PLAYER_DIRZ]*(60+intro_offset))/10.0,
+		          (float)(player->data[PLAYER_Z]-player->data[PLAYER_DIRZ]*(60))/10.0,
 		          (float)(player->data[PLAYER_X]/10.0),
 		          (float)(player->data[PLAYER_Y]/10.0),
 		          (float)(player->data[PLAYER_Z]/10.0),
@@ -435,57 +406,42 @@ void runGameFrame(void)
 
 
 	#ifdef PC_TARGET
-	/*** LIGHTING ************/
-
-	/* position light 1 - diffuse */
+	/* the original lighting code.
+	   doesn't build with libnds */
 	light_position[0] = (GLfloat)(player->data[PLAYER_X] - player->data[PLAYER_DIRX]*5)/10.0;
 	light_position[1] = (GLfloat)(player->data[PLAYER_Y]+10)/10.0;
 	light_position[2] = (GLfloat)(player->data[PLAYER_Z]-player->data[PLAYER_DIRZ]*5)/10.0;
 	glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-
-	/**************************/
 	#endif
 
 #ifdef PC_TARGET
 	vc = 0;		/* vertex count checking on PC */
 #endif
 
-	/* Draw the world model */
+	/* draw the world */
 	glPushMatrix();
 	glScalef(0.1f, 0.1f, 0.1f);
 	drawModelWithGL_big(worldModel);	/* see model-draw.c for _big explanation */
-#ifdef PC_TARGET
-	glPopMatrix();
-#else
-	glPopMatrix(1);
-#endif
+	PopMatrix();
 
-	/* Draw objects */
+	/* draw objects */
 	for(node = objs; node; node = node->next)
 	{
 		glPushMatrix();
 		drawFunction(node);
-#ifdef PC_TARGET
-		glPopMatrix();
-#else
-		glPopMatrix(1);
-#endif
+		PopMatrix();
 	}
 
-
-
-#ifdef PC_TARGET
+	#ifdef PC_TARGET
 	/* vertex count checking on PC */
-
 	char buf[256];
 	sprintf(buf, "clown3d-DS :: PC build :: %d vertices", vc);
 	SDL_WM_SetCaption(buf, NULL);	
 	if(vc > 6144){
 		printf("Vertex count too high: %d\n", vc);
 	}
-#endif
-
-	/*******************************************/
+	#endif
 
 	gc_collect();
 }
+
