@@ -2,5 +2,5 @@
 *.obj
 build/*
 demo
-demo.exe
+*.exe
 stdout.txt
