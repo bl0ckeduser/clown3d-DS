@@ -84,6 +84,12 @@ void PopMatrix(void)
 int main(int argc, char* argv[])
 {
 #ifdef PC_TARGET
+	/* Apparently, this will halt execution
+	   if something illegal is done */
+	defaultExceptionHandler();
+#endif
+
+#ifdef PC_TARGET
 	/* SDL video stuff */
 	SDL_Surface* display;
 	SDL_VideoInfo* video_info;
@@ -95,7 +101,8 @@ int main(int argc, char* argv[])
 
 	printf("clown3d demo by bl0ckeduser\n");
 	printf("DS port based on 3d example code written by Dovoto (thanks !)\n");
-	printf("Made with devKitPro and libnds\n\n");
+	printf("Made with devKitPro and libnds\n");
+	printf("built %s %s\n\n", __DATE__, __TIME__);
 #endif
 
 	printf("Loading turtle model...");	
