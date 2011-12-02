@@ -7,6 +7,11 @@ It's worth mentioning:
 The compiled ROM file is included here; it's "clown3d-DS.nds".
 Also there is an early screenshot, "wip-screenshot.PNG".
 
+Also, here are the controls:
+	A button	shooting bullets
+	B button	jumping
+	D-pad		movement
+
 The first phase of porting involved decreasing the
 vertex count of all the models to make them "fit" on
 the DS' limited GPU; I also made sure the engine's RAM
