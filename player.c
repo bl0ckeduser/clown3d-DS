@@ -164,13 +164,13 @@ void playerTick(game_obj* player)
 
 void playerCollide(game_obj* a, game_obj* b)
 {
-	/* Check if the player hit something solid,
-	   and adpapt his coordinates and "physics state"
+	/* First check if the player hit something solid,
+	   and adpapt its coordinates and "physics state"
 	   in consequence */
 	if(b->type == SOLID || b->type==DOOR) {
 
-		/* If we hit a solid object and were moved up,
-		   we're on a platform */
+		/* If we hit a solid object when moving down 
+		   and were moved up, we're on a platform */
 		if(a->box.move.y != 0 
 		 && (a->box.min.y + 10 - a->data[PLAYER_Y] > 0.0))
 			a->data[PLAYER_ON_PLATFORM] = 1;
@@ -192,20 +192,25 @@ void playerCollide(game_obj* a, game_obj* b)
 		b->data[KEY_EXISTS] = 0;
 		a->data[PLAYER_KEYS]++;
 	} else {
-		/* UGLY HACK */
-	  /* rewrite original player collision box and movement vector */
-        player->box.min.x = (float)(player->data[PLAYER_X] - 10);
-        player->box.min.y = (float)(player->data[PLAYER_Y] - 10);
-        player->box.min.z = (float)(player->data[PLAYER_Z] - 10);
-        player->box.max.x = (float)(player->data[PLAYER_X] + 10);
-        player->box.max.y = (float)(player->data[PLAYER_Y] + 10);
-        player->box.max.z = (float)(player->data[PLAYER_Z] + 10);
-        player->box.move.x = (float)player->data[PLAYER_MOVEX];
-        player->box.move.y = (float)player->data[PLAYER_MOVEY];
-        player->box.move.z = (float)player->data[PLAYER_MOVEZ];
+		/* UGLY HACK: cancel out collisions with
+		   objects which are not considered "solid".
+		   This should probably be handled in the
+		   collision system itself */
+		   
+		/* rewrite original player collision box and movement vector */
+		player->box.min.x = (float)(player->data[PLAYER_X] - 10);
+		player->box.min.y = (float)(player->data[PLAYER_Y] - 10);
+		player->box.min.z = (float)(player->data[PLAYER_Z] - 10);
+		player->box.max.x = (float)(player->data[PLAYER_X] + 10);
+		player->box.max.y = (float)(player->data[PLAYER_Y] + 10);
+		player->box.max.z = (float)(player->data[PLAYER_Z] + 10);
+		player->box.move.x = (float)player->data[PLAYER_MOVEX];
+		player->box.move.y = (float)player->data[PLAYER_MOVEY];
+		player->box.move.z = (float)player->data[PLAYER_MOVEZ];
 	}
 
-	/* keys open doors */
+	/* If the player hits the door and has a key,
+	   open the door and get rid of the key */
 	if(b->type == DOOR && b->data[DOOR_CLOSED])
 	{
 		if(a->data[PLAYER_KEYS] > 0)
