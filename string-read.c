@@ -1,4 +1,4 @@
-/* read tokens in text datafiles stored in ROM */
+/* read tokens from text data stored in ROM */
 
 char str[1024];
 int i;
@@ -6,13 +6,11 @@ float f;
 
 void whitespace(char** data)
 {
-	/* while(**data && !(isalnum(**data) || **data=='.' || **data=='-')) ++*data; */
 	while(**data && **data==' ') ++*data;
 }
 
 void to_whitespace(char** data)
 {
-	/* while(**data && (isalnum(**data) || **data=='.' || **data=='-')) ++*data; */
 	while(**data && **data!=' ') ++*data;
 }
 

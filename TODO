@@ -19,10 +19,10 @@
   (small) range. A workaround for this quirk was added to
   model-draw.c; use drawModelWithGL_big(model*) to use this
   fixed version.
-
-- Faster code / optimize
++ Faster code / optimize
 	* key model seems to be the [performance] culprit.
-	  will have to decrease vertex count all over again...
+
+- More optimization ?
 - Add lighting/shininess/antialiasing/you-name-it effects
   to make things nicer
 

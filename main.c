@@ -31,9 +31,16 @@ extern char bullet_model[];
 
 #include "headers.h"
 
+#ifdef PC_TARGET
+/* vertex count checking */
 int vc;
 
-#ifdef PC_TARGET
+/* lighting and materials for PC version */
+GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
+GLfloat diffuse_light[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat ambient_light[] = { 0.5, 0.5, 0.5, 1.0 };
+GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+
 /* SDL event structures */
 SDL_Event event;
 Uint8 *keystate;
@@ -50,14 +57,6 @@ model* targetModel;
 /* game objects */
 game_obj *objs = NULL, *node = NULL, *player = NULL;
 
-/* the game's lighting */
-GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
-GLfloat diffuse_light[] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat ambient_light[] = { 0.5, 0.5, 0.5, 1.0 };
-
-/* materials */
-GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-
 /* Here, everything runs at a constant 30 FPS,
    however the clown3d engine is designed 
    for variable FPS */
@@ -69,131 +68,35 @@ float yoffs = /* 83.0 */20.0;
 
 void runGameFrame(void);
 
-/* This adresses a quirk in libnds.
+/* This addresses a quirk in libnds.
    The official GL version of glPopMatrix
    requires no parameters, but the libnds
    version has one parameter */
 void PopMatrix(void)
 {
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	glPopMatrix();
-	#else
+#else
 	glPopMatrix(1);	/* copied from Dovoto */
-	#endif
-}
-
-/*
- * bunch of pseudo-OOP stuff follows
- */
-
-void initFunction(void *va)
-{
-	game_obj* a = va;
-
-	switch(a->type) {
-	case PLAYER:
-		playerInit(a);
-		break;
-	case KEY:
-		keyInit(a);
-		break;
-	case DOOR:
-		doorInit(a);
-		break;
-	case TARGET:
-		targetInit(a);
-		break;
-	}
-}
-
-void tickFunction(void *va)
-{
-	game_obj* a = (game_obj *)va;
-
-	if(a==NULL)	return;
-
-	switch(a->type) {
-	case PLAYER:
-		playerTick(a);
-		break;
-	case KEY:
-		keyTick(a);
-		break;
-	case DOOR:
-		doorTick(a);
-		break;
-	case BULLET:
-		bulletTick(a);
-		break;
-	case TARGET:
-		targetTick(a);
-		break;
-	}
-
-}
-
-void drawFunction(void* va)
-{
-	game_obj* a = va;
-
-	if(a==NULL)	return;
-
-	switch(a->type) {
-	case KEY:
-		keyDraw(a);
-		break;
-	case PLAYER:
-		playerDraw(a);
-		break;
-	case DOOR:
-		doorDraw(a);
-		break;
-	case BULLET:
-		bulletDraw(a);
-		break;
-	case TARGET:
-		targetDraw(a);
-		break;
-	}
-}
-
-void collisionFunction(void* va, void* vb)
-{
-	game_obj* a = va;
-	game_obj* b = vb;
-
-	if(a == NULL || b==NULL) return;
-
-	switch(a->type) {
-	case PLAYER:
-		playerCollide(a, b);
-		break;
-	case BULLET:
-		bulletCollide(a, b);
-		break;
-	case TARGET:
-		targetCollide(a, b);
-		break;
-	}
+#endif
 }
 
 int main(int argc, char* argv[])
 {
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	/* SDL video stuff */
 	SDL_Surface* display;
 	SDL_VideoInfo* video_info;
-	#else
-	/* NDS: setup text logging */
-	consoleDemoInit();		
+#else
+	/* allow text on lower screen */
+	consoleDemoInit();	
 	videoSetMode(MODE_FB0);
 	vramSetBankA(VRAM_A_LCD);
 
-	/* Credits */
 	printf("clown3d demo by bl0ckeduser\n");
 	printf("DS port based on 3d example code written by Dovoto (thanks !)\n");
 	printf("Made with devKitPro and libnds\n\n");
-	#endif
+#endif
 
 	printf("Loading turtle model...");	
 	turtleModel = loadModel(turtle_model);		/* player model */
@@ -249,6 +152,7 @@ int main(int argc, char* argv[])
 		   NDS 3D mode init code copied from
 		   nehe3.cpp by Dovoto
 		*/
+
 		// Setup the Main screen for 3D 
 		videoSetMode(MODE_0_3D);
     
@@ -297,32 +201,32 @@ int main(int argc, char* argv[])
 		#endif
 
 		while(1) {
-			#ifdef PC_TARGET
+#ifdef PC_TARGET
 			SDL_PollEvent(&event);
 			keystate = SDL_GetKeyState(NULL);
 			if(keystate[SDLK_ESCAPE] || keystate[SDLK_q]) break;
 			if(event.type == SDL_QUIT) break;
-			#endif
+#endif
 
 			runGameFrame();
 
-			#ifdef PC_TARGET
+#ifdef PC_TARGET
 			LimitFPS(30);
 			SDL_GL_SwapBuffers();
-			#else
+#else
 			/* framerate sync code based on Dovoto's examples */
         		glFlush(0);
 			swiWaitForVBlank();
 			swiWaitForVBlank();		/* 30 fps */
-			#endif
+#endif
 		}
 
 		freeObjs(objs);
 
-		#ifdef PC_TARGET
+#ifdef PC_TARGET
 		/* Free SDL display */
 		SDL_FreeSurface(display);
-		#endif
+#endif
 
 		/* Free game models */
 		freeModel(turtleModel);
@@ -334,9 +238,9 @@ int main(int argc, char* argv[])
 
 		gc_stop();
 
-		#ifdef PC_TARGET
+#ifdef PC_TARGET
 		SDL_Quit();
-		#endif
+#endif
 	}
 
 	/* RAM usage estimation on PC */
@@ -347,7 +251,6 @@ int main(int argc, char* argv[])
 
 void runGameFrame(void)
 {
-
 	/* 
 	 * Tick game objects and resolve collisions 
 	 */
@@ -369,12 +272,12 @@ void runGameFrame(void)
 	/* Setup the camera */
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	gluPerspective(60.0f, 640.0f/480.0f, 0.1f, 100.0f);
-	#else
+#else
 	gluPerspective(60.0f, 255.0f/192.0f, 0.1f, 100.0f);
 	glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE);	/* copied from Dovoto */
-	#endif
+#endif
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -405,16 +308,14 @@ void runGameFrame(void)
 	}
 
 
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	/* the original lighting code.
 	   doesn't build with libnds */
 	light_position[0] = (GLfloat)(player->data[PLAYER_X] - player->data[PLAYER_DIRX]*5)/10.0;
 	light_position[1] = (GLfloat)(player->data[PLAYER_Y]+10)/10.0;
 	light_position[2] = (GLfloat)(player->data[PLAYER_Z]-player->data[PLAYER_DIRZ]*5)/10.0;
 	glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-	#endif
 
-#ifdef PC_TARGET
 	vc = 0;		/* vertex count checking on PC */
 #endif
 
@@ -432,7 +333,7 @@ void runGameFrame(void)
 		PopMatrix();
 	}
 
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	/* vertex count checking on PC */
 	char buf[256];
 	sprintf(buf, "clown3d-DS :: PC build :: %d vertices", vc);
@@ -440,7 +341,7 @@ void runGameFrame(void)
 	if(vc > 6144){
 		printf("Vertex count too high: %d\n", vc);
 	}
-	#endif
+#endif
 
 	gc_collect();
 }

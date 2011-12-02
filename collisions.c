@@ -13,11 +13,6 @@
 #include <stdlib.h>
 #include "headers.h"
 
-float avoidZero(float f)
-{
-	return f;
-}
-
 /* Compares using absolute values, equivalent
    to measuring the magnitude of a 1-dimensional
    vector. Ignores zero-length values as
@@ -99,9 +94,9 @@ float smallestOfThree(float a, float b, float c)
 			 */									\
 												\
 			ratio = smallestOfThree							\
-				(x_offs /avoidZero(node->box.move.x),				\
-				y_offs / avoidZero(node->box.move.y),				\
-				z_offs / avoidZero(node->box.move.z));				\
+				(x_offs / node->box.move.x,					\
+				y_offs / node->box.move.y,					\
+				z_offs / node->box.move.z);					\
 												\
 			/* Cheap way to avoid glitches. Normally,				\
 			   ratio should be between 0 and 1. */					\
@@ -150,7 +145,7 @@ void resolveCollisions(game_obj* objs, void (*handler)(void*, void*))
 	game_obj *node, *node2;
 
 	for(node = objs; node != NULL; node = node->next) {
-		if(node->type == SOLID)  continue;	/* SOLIDs don't move ! */
+		if(node->type == SOLID)  continue;	/* heuristic: SOLIDs don't move ! */
 		for(node2 = objs; node2 != NULL; node2 = node2->next) {
 			if(node != node2 && node->type != NONE && node2->type != NONE) {
 				/* Check if any of the current boxe's

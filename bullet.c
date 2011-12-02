@@ -1,8 +1,6 @@
 #include "headers.h"
 #include <math.h>
 
-#define BULLET_YACCEL -1.0
-
 game_obj* newBullet(game_obj* list, float x, float y, float z, float angle)
 {
 	game_obj* bul = newListNode(list);
@@ -30,23 +28,13 @@ void bulletTick(game_obj* bul)
 		deleteNode(bul);
 	}
 
-	/* resulting from a special request,
-	   the bullets have gravity */
-	/*
-		stupid idea
-	if(bul->data[BULLET_YVEL] < BULLET_YACCEL)
-		bul->data[BULLET_YVEL] = BULLET_YACCEL;
-	bul->data[BULLET_YVEL] += BULLET_YACCEL * dtime;
-	movey = bul->data[BULLET_YVEL] * dtime +
-		(BULLET_YACCEL * dtime * dtime) / 2.0;
-	*/
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	dirx = (float)sin(bul->data[BULLET_ANGLE] / 360.0 * (2*3.14));
 	dirz = (float)cos(bul->data[BULLET_ANGLE] / 360.0 * (2*3.14));
-	#else
+#else
 	dirx = my_sin(bul->data[BULLET_ANGLE]);
 	dirz = my_cos(bul->data[BULLET_ANGLE]);
-	#endif
+#endif
 
 	bul->data[BULLET_X] += 20 * dirx * dtime;
 	bul->data[BULLET_Y] += movey;

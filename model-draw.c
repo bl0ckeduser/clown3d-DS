@@ -52,8 +52,10 @@ int drawModelWithGL_big(model* model)
 				    model -> vertices[currentFace -> vertnum[vertex_id]-1].x / model->x_scale * RES,
 				    model -> vertices[currentFace -> vertnum[vertex_id]-1].y / model->y_scale * RES,
 				    model -> vertices[currentFace -> vertnum[vertex_id]-1].z / model->z_scale * RES);
-
-				vc++;
+				
+#ifdef PC_TARGET
+				vc++;		/* for vertex count checking */
+#endif
 				vertex_id++;
 			}
 
@@ -64,7 +66,12 @@ int drawModelWithGL_big(model* model)
 		currentGroup = currentGroup -> next;
 	}
 
+#ifdef PC_TARGET
 	return vc;
+#else
+	return 0;
+#endif
+
 }
 
 int drawModelWithGL(model* model)
@@ -97,7 +104,9 @@ int drawModelWithGL(model* model)
 				    model -> vertices[currentFace -> vertnum[vertex_id]-1].y,
 				    model -> vertices[currentFace -> vertnum[vertex_id]-1].z);
 
-				vc++;
+#ifdef PC_TARGET
+				vc++;		/* for vertex count checking */
+#endif
 				vertex_id++;
 			}
 
@@ -108,6 +117,11 @@ int drawModelWithGL(model* model)
 		currentGroup = currentGroup -> next;
 	}
 
+#ifdef PC_TARGET
 	return vc;
+#else
+	return 0;
+#endif
+
 }
 

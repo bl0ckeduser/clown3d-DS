@@ -1,3 +1,6 @@
+# generate an ugly but functional Makefile
+# for the PC target
+
 echo "# now works in BSD \`make'
 
 CC ?= cc"

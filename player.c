@@ -33,9 +33,9 @@ void playerTick(game_obj* player)
 	/* platform independent controller bits */
 	int up, down, left, right, shoot, jump;
 
-      player->data[PLAYER_MOVEX] = 0.0;
-      player->data[PLAYER_MOVEY] = 0.0;
-      player->data[PLAYER_MOVEZ] = 0.0;
+	player->data[PLAYER_MOVEX] = 0.0;
+	player->data[PLAYER_MOVEY] = 0.0;
+	player->data[PLAYER_MOVEZ] = 0.0;
 
 	if(player->data[PLAYER_YVEL] < -MAX_YVEL)
 		player->data[PLAYER_YVEL] = -MAX_YVEL;
@@ -59,15 +59,15 @@ void playerTick(game_obj* player)
 	/* Convert the player angle to a unit vector,
 	   converting the said angle to radians along
 	   the way */
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	player->data[PLAYER_DIRX] = 
 		(float)sin(player->data[PLAYER_ANGLE] / 360.0 * (2*3.14));
 	player->data[PLAYER_DIRZ] = 
 		(float)cos(player->data[PLAYER_ANGLE] / 360.0 * (2*3.14));
-	#else
+#else
 	player->data[PLAYER_DIRX] = my_sin(player->data[PLAYER_ANGLE]);
 	player->data[PLAYER_DIRZ] = my_cos(player->data[PLAYER_ANGLE]);
-	#endif
+#endif
 
 	/* Make sure everything is within expected range */
 	if(player->data[PLAYER_ANGLE] < 0)
@@ -149,16 +149,16 @@ void playerTick(game_obj* player)
       player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
       player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
 
-      /* Player collision box and movement vector */
-      player->box.min.x = (float)(player->data[PLAYER_X] - 10);
-      player->box.min.y = (float)(player->data[PLAYER_Y] - 10);
-      player->box.min.z = (float)(player->data[PLAYER_Z] - 10);
-      player->box.max.x = (float)(player->data[PLAYER_X] + 10);
-      player->box.max.y = (float)(player->data[PLAYER_Y] + 10);
-      player->box.max.z = (float)(player->data[PLAYER_Z] + 10);
-      player->box.move.x = (float)player->data[PLAYER_MOVEX];
-      player->box.move.y = (float)player->data[PLAYER_MOVEY];
-      player->box.move.z = (float)player->data[PLAYER_MOVEZ];
+	/* Player collision box and movement vector */
+	player->box.min.x = (float)(player->data[PLAYER_X] - 10);
+	player->box.min.y = (float)(player->data[PLAYER_Y] - 10);
+	player->box.min.z = (float)(player->data[PLAYER_Z] - 10);
+	player->box.max.x = (float)(player->data[PLAYER_X] + 10);
+	player->box.max.y = (float)(player->data[PLAYER_Y] + 10);
+	player->box.max.z = (float)(player->data[PLAYER_Z] + 10);
+	player->box.move.x = (float)player->data[PLAYER_MOVEX];
+	player->box.move.y = (float)player->data[PLAYER_MOVEY];
+	player->box.move.z = (float)player->data[PLAYER_MOVEZ];
 
 }
 

@@ -248,6 +248,11 @@ extern float my_sin(float angle);
 extern float my_cos(float angle);
 #endif
 
+extern void initFunction(void *va);
+extern void tickFunction(void *va);
+extern void drawFunction(void* va);
+extern void collisionFunction(void* va, void* vb);
+
 #endif
 
 
