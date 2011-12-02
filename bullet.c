@@ -6,7 +6,7 @@ game_obj* newBullet(game_obj* list, float x, float y, float z, float angle)
 	game_obj* bul = newListNode(list);
 
 	bul->type = BULLET;
-	bul->data = (float *)malloc(7 * sizeof(float));
+	bul->data = (float *)malloc(9 * sizeof(float));
 	bul->data[BULLET_X] = x;
 	bul->data[BULLET_Y] = y;
 	bul->data[BULLET_Z] = z;
@@ -15,41 +15,40 @@ game_obj* newBullet(game_obj* list, float x, float y, float z, float angle)
 	bul->data[BULLET_TIMER] = 45;
 	bul->data[BULLET_EXPLODED] = 0;
 
+#ifdef PC_TARGET
+	bul->data[BULLET_XDIR] = (float)sin(bul->data[BULLET_ANGLE] / 360.0 * (2*3.14));
+	bul->data[BULLET_ZDIR] = (float)cos(bul->data[BULLET_ANGLE] / 360.0 * (2*3.14));
+#else
+	bul->data[BULLET_XDIR] = my_sin(bul->data[BULLET_ANGLE]);
+	bul->data[BULLET_ZDIR] = my_cos(bul->data[BULLET_ANGLE]);
+#endif
+
+	/* collision system movement vector */
+	bul->box.move.x = (float)10*bul->data[BULLET_XDIR];
+	bul->box.move.y = (float)0;
+	bul->box.move.z = (float)10*bul->data[BULLET_ZDIR];
+
 	return bul;
 }
 
 void bulletTick(game_obj* bul)
 {
-	float dirx, dirz, movey = 0;
-
 	if(bul->data[BULLET_EXPLODED]==1)
 	{
 		++bul->data[BULLET_EXPLODED];
 		deleteNode(bul);
 	}
 
-#ifdef PC_TARGET
-	dirx = (float)sin(bul->data[BULLET_ANGLE] / 360.0 * (2*3.14));
-	dirz = (float)cos(bul->data[BULLET_ANGLE] / 360.0 * (2*3.14));
-#else
-	dirx = my_sin(bul->data[BULLET_ANGLE]);
-	dirz = my_cos(bul->data[BULLET_ANGLE]);
-#endif
+	bul->data[BULLET_X] += 20 * bul->data[BULLET_XDIR] * dtime;
+	bul->data[BULLET_Z] += 20 * bul->data[BULLET_ZDIR] * dtime;
 
-	bul->data[BULLET_X] += 20 * dirx * dtime;
-	bul->data[BULLET_Y] += movey;
-	bul->data[BULLET_Z] += 20 * dirz * dtime;
-
-        /* bullet collision box and movement vector */
-        bul->box.min.x = (float)(bul->data[BULLET_X] - 5);
-        bul->box.min.y = (float)(bul->data[BULLET_Y] - 5);
-        bul->box.min.z = (float)(bul->data[BULLET_Z] - 5);
-        bul->box.max.x = (float)(bul->data[BULLET_X] + 5);
-        bul->box.max.y = (float)(bul->data[BULLET_Y] + 5);
-        bul->box.max.z = (float)(bul->data[BULLET_Z] + 5);
-        bul->box.move.x = (float)10*dirx;
-        bul->box.move.y = (float)movey;
-        bul->box.move.z = (float)10*dirz;
+	/* bullet collision box */
+	bul->box.min.x = (float)(bul->data[BULLET_X] - 5);
+	bul->box.min.y = (float)(bul->data[BULLET_Y] - 5);
+	bul->box.min.z = (float)(bul->data[BULLET_Z] - 5);
+	bul->box.max.x = (float)(bul->data[BULLET_X] + 5);
+	bul->box.max.y = (float)(bul->data[BULLET_Y] + 5);
+	bul->box.max.z = (float)(bul->data[BULLET_Z] + 5);
 
 	if((bul->data[BULLET_TIMER] -= 3*dtime) < 0.0)
 		if(!bul->data[BULLET_EXPLODED])
@@ -58,7 +57,7 @@ void bulletTick(game_obj* bul)
 
 void bulletCollide(game_obj* a, game_obj* b)
 {
-	if(a->type==BULLET && b->type == SOLID || (b->type==TARGET && !b->data[TARGET_EXPLODED]))
+	if(a->type==BULLET || (b->type==TARGET && !b->data[TARGET_EXPLODED]))
 		if(!a->data[BULLET_EXPLODED])
 			a->data[BULLET_EXPLODED] = 1;
 

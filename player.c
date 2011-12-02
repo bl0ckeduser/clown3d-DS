@@ -112,9 +112,9 @@ void playerTick(game_obj* player)
 	if(shoot && player->data[PLAYER_BULLET_TIMER] <= 0.1f)
 	{
 		player->data[PLAYER_BULLET_TIMER] = 25.0;
-		newBullet(player, player->data[PLAYER_X],
+		newBullet(player, player->data[PLAYER_X] + player->data[PLAYER_DIRX] * 10,
 			player->data[PLAYER_Y],
-			player->data[PLAYER_Z],
+			player->data[PLAYER_Z] + player->data[PLAYER_DIRZ] * 10,
 			player->data[PLAYER_ANGLE]);
 	}
 

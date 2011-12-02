@@ -40,6 +40,13 @@ void keyTick(game_obj* a)
 
 		if(a->rot>360)
 			a->rot = 0;
+	} else {
+		a->box.min.x =				/* empty bounding box */
+		a->box.min.y = 
+		a->box.min.z = 		
+		a->box.max.x = 
+		a->box.max.y = 
+		a->box.max.z = 0;
 	}
 }
 
