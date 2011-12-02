@@ -83,7 +83,7 @@ void PopMatrix(void)
 
 int main(int argc, char* argv[])
 {
-#ifdef PC_TARGET
+#ifndef PC_TARGET
 	/* Apparently, this will halt execution
 	   if something illegal is done */
 	defaultExceptionHandler();
