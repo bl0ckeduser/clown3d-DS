@@ -145,9 +145,9 @@ void playerTick(game_obj* player)
 
 	player->data[PLAYER_ON_PLATFORM]  = 0.0;
 
-      player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
-      player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
-      player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
+	player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
+	player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
+	player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
 
 	/* Player collision box and movement vector */
 	player->box.min.x = (float)(player->data[PLAYER_X] - 10);
@@ -164,14 +164,31 @@ void playerTick(game_obj* player)
 
 void playerCollide(game_obj* a, game_obj* b)
 {
+	/* Check if the player hit something solid,
+	   and adpapt his coordinates and "physics state"
+	   in consequence */
 	if(b->type == SOLID || b->type==DOOR) {
-		if(a->box.move.y != 0 && (a->box.min.y + 10 - a->data[PLAYER_Y] > 0.0))
+
+		/* If we hit a solid object and were moved up,
+		   we're on a platform */
+		if(a->box.move.y != 0 
+		 && (a->box.min.y + 10 - a->data[PLAYER_Y] > 0.0))
 			a->data[PLAYER_ON_PLATFORM] = 1;
+	
+		/* Update the player's coordinates to the
+		   collision-resolved ones. 
+		   Note that we only accept resolved 
+		   collision data for the Y axis if 
+		   it results from movement on the 
+		   Y axis */
+
 		a->data[PLAYER_X] = a->box.min.x + 10;
 		if(a->box.move.y != 0)
 			a->data[PLAYER_Y] = a->box.min.y + 10;
 		a->data[PLAYER_Z] = a->box.min.z + 10;
+
 	} else if(b->type == KEY && b->data[KEY_EXISTS]) {
+		/* pick up a key */
 		b->data[KEY_EXISTS] = 0;
 		a->data[PLAYER_KEYS]++;
 	} else {
