@@ -42,6 +42,10 @@ void bulletTick(game_obj* bul)
 	if(bul->data[BULLET_EXPLODED]==1)
 	{
 		++bul->data[BULLET_EXPLODED];
+		
+		/* The bullet is not immediately deleted,
+		   but rather scheduled for deletion and
+		   deleted when gc_collect() is called. */
 		deleteNode(bul);
 	}
 
