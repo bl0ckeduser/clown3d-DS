@@ -21,7 +21,8 @@
 
 extern char door_model[];
 extern char key_model[];
-extern char maze_model[];
+extern char maze_model[];	/* maze world */
+extern char world_model[];	/* default world */
 extern char turtle_model[];
 extern char bullet_model[];
 
@@ -83,6 +84,8 @@ void PopMatrix(void)
 
 int main(int argc, char* argv[])
 {
+	int chosen_world = 1;
+
 #ifndef PC_TARGET
 	/* Apparently, this will halt execution
 	   if something illegal is done */
@@ -103,6 +106,21 @@ int main(int argc, char* argv[])
 	printf("DS port based on 3d example code written by Dovoto (thanks !)\n");
 	printf("Made with devKitPro and libnds\n");
 	printf("built %s %s\n\n", __DATE__, __TIME__);
+
+	/* let the player choose one of two worlds */
+	printf("Press A to play in the default world; press B to play in the maze world\n\n");
+	while(1){
+		scanKeys();
+		if(keysHeld() & KEY_A){
+			chosen_world = 1;
+			break;
+		}
+
+		if(keysHeld() & KEY_B){
+			chosen_world = 2;
+			break;
+		}
+	}
 #endif
 
 	printf("Loading turtle model...");	
@@ -124,14 +142,21 @@ int main(int argc, char* argv[])
 	printf("Creating world objects... ");
 	objs = newList();
 	player = newPlayer(objs, 0, 20, 0);
-	(void)newDoor(objs, -7.456112, -2.289094, -124.128632);
-	(void)newDoor(objs, -85.255035,-2.289177,12.114304);
-	(void)newKey(objs, -44.039379, 2.111141, -40.276863);
-	(void)newKey(objs, -73.642761, -2.289178, -166.881195);
+	if(chosen_world == 2){	
+		/* in the maze world, there are keys and doors */
+		(void)newDoor(objs, -7.456112, -2.289094, -124.128632);
+		(void)newDoor(objs, -85.255035,-2.289177,12.114304);
+		(void)newKey(objs, -44.039379, 2.111141, -40.276863);
+		(void)newKey(objs, -73.642761, -2.289178, -166.881195);
+	}
 	printf("done.\n");
 
 	printf("Loading world model... ");
-	worldModel = loadModel(maze_model);
+	if(chosen_world == 1){
+		worldModel = loadModel(world_model);
+	} else {
+		worldModel = loadModel(maze_model);
+	}
 	printf("done.\n");
 
 	printf("Making world bounding boxes...");
