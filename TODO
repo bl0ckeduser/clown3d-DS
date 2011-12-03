@@ -22,7 +22,16 @@
 + Optimizied key and door models; game runs at full speed
 
 - Optimize bullets ? They seem to cause some lag
+  I doubt they can be further optimized
 - Add lighting/shininess/antialiasing/you-name-it effects
   to make things nicer
+- To improve No$GBA's [I just have the freeware one] quality rating
+  it seems I should add a libnds equivalent of PAlib's
+
+    PA_InitVBL(); // Initializes a standard VBL
+
+  (My interrupt handling must be a bit off, will have to read up on
+  that.)
+
 
 
