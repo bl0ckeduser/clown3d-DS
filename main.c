@@ -120,6 +120,8 @@ int main(int argc, char* argv[])
 			chosen_world = 2;
 			break;
 		}
+
+		swiWaitForVBlank();
 	}
 #endif
 
