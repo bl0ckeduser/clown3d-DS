@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <stdio.h>
 
 size_t tot = 0;
 

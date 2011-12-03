@@ -23,7 +23,13 @@ game_obj* newBullet(game_obj* list, float x, float y, float z, float angle)
 	bul->data[BULLET_ZDIR] = my_cos(bul->data[BULLET_ANGLE]);
 #endif
 
-	/* collision system movement vector */
+	/* collision data */
+	bul->box.min.x = (float)(bul->data[BULLET_X] - 5);
+	bul->box.min.y = (float)(bul->data[BULLET_Y] - 5);
+	bul->box.min.z = (float)(bul->data[BULLET_Z] - 5);
+	bul->box.max.x = (float)(bul->data[BULLET_X] + 5);
+	bul->box.max.y = (float)(bul->data[BULLET_Y] + 5);
+	bul->box.max.z = (float)(bul->data[BULLET_Z] + 5);
 	bul->box.move.x = (float)10*bul->data[BULLET_XDIR];
 	bul->box.move.y = (float)0;
 	bul->box.move.z = (float)10*bul->data[BULLET_ZDIR];
@@ -41,14 +47,10 @@ void bulletTick(game_obj* bul)
 
 	bul->data[BULLET_X] += 20 * bul->data[BULLET_XDIR] * dtime;
 	bul->data[BULLET_Z] += 20 * bul->data[BULLET_ZDIR] * dtime;
-
-	/* bullet collision box */
-	bul->box.min.x = (float)(bul->data[BULLET_X] - 5);
-	bul->box.min.y = (float)(bul->data[BULLET_Y] - 5);
-	bul->box.min.z = (float)(bul->data[BULLET_Z] - 5);
-	bul->box.max.x = (float)(bul->data[BULLET_X] + 5);
-	bul->box.max.y = (float)(bul->data[BULLET_Y] + 5);
-	bul->box.max.z = (float)(bul->data[BULLET_Z] + 5);
+	bul->box.min.x += 20 * bul->data[BULLET_XDIR] * dtime;
+	bul->box.max.x += 20 * bul->data[BULLET_XDIR] * dtime;
+	bul->box.min.z += 20 * bul->data[BULLET_ZDIR] * dtime;
+	bul->box.max.z += 20 * bul->data[BULLET_ZDIR] * dtime;
 
 	if((bul->data[BULLET_TIMER] -= 3*dtime) < 0.0)
 		if(!bul->data[BULLET_EXPLODED])
@@ -65,9 +67,8 @@ void bulletCollide(game_obj* a, game_obj* b)
 
 void bulletDraw(game_obj* bul)
 {
-                glTranslatef((GLfloat)bul->data[BULLET_X]/10.0f, (GLfloat)bul->data[BULLET_Y]/10.0f,
-                             (GLfloat)bul->data[BULLET_Z]/10.0f);
-		glScalef(0.1f, 0.1f, 0.1f);
-                glRotatef(bul->data[BULLET_ANGLE], 0.0f, 1.0f, 0.0f);
-                drawModelWithGL(bulletModel);
+	glTranslatef((GLfloat)bul->data[BULLET_X]/10.0f, (GLfloat)bul->data[BULLET_Y]/10.0f,
+		(GLfloat)bul->data[BULLET_Z]/10.0f);
+	glRotatef(bul->data[BULLET_ANGLE], 0.0f, 1.0f, 0.0f);
+	drawModelWithGL(bulletModel);
 }

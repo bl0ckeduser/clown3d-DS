@@ -21,6 +21,7 @@
   fixed version.
 + Optimizied key and door models; game runs at full speed
 
+- Optimize bullets ? They seem to cause some lag
 - Add lighting/shininess/antialiasing/you-name-it effects
   to make things nicer
 

@@ -83,8 +83,8 @@ void playerTick(game_obj* player)
 #ifdef PC_TARGET
 	shoot = keystate[SDLK_s];
 	jump = keystate[SDLK_z];
-	left = keystate[SDLK_RIGHT];
-	right = keystate[SDLK_LEFT];
+	left = keystate[SDLK_LEFT];
+	right = keystate[SDLK_RIGHT];
 	down = keystate[SDLK_DOWN];
 	up = keystate[SDLK_UP];
 #else
@@ -94,8 +94,8 @@ void playerTick(game_obj* player)
 	u16 keys = keysHeld();
 	shoot = (keys & KEY_A);
 	jump = (keys & KEY_B);
-	left = (keys & KEY_RIGHT);
-	right = (keys & KEY_LEFT);
+	left = (keys & KEY_LEFT);
+	right = (keys & KEY_RIGHT);
 	down = (keys & KEY_DOWN);
 	up = (keys & KEY_UP);
 #endif
@@ -112,17 +112,17 @@ void playerTick(game_obj* player)
 	if(shoot && player->data[PLAYER_BULLET_TIMER] <= 0.1f)
 	{
 		player->data[PLAYER_BULLET_TIMER] = 25.0;
-		newBullet(player, player->data[PLAYER_X] + player->data[PLAYER_DIRX] * 10,
+		newBullet(player, player->data[PLAYER_X] + player->data[PLAYER_DIRX] * 15,
 			player->data[PLAYER_Y],
-			player->data[PLAYER_Z] + player->data[PLAYER_DIRZ] * 10,
+			player->data[PLAYER_Z] + player->data[PLAYER_DIRZ] * 15,
 			player->data[PLAYER_ANGLE]);
 	}
 
 	if(left)
-		player->data[PLAYER_ANGLE] -= 9.0 * dtime;
+		player->data[PLAYER_ANGLE] += 9.0 * dtime;
 
 	if(right)
-		player->data[PLAYER_ANGLE] += 9.0 * dtime;
+		player->data[PLAYER_ANGLE] -= 9.0 * dtime;
 
 	if(up) {
 		player->data[PLAYER_MOVEX] = 7.5 * 
@@ -132,9 +132,9 @@ void playerTick(game_obj* player)
 	}
 
 	if(down) {
-		player->data[PLAYER_MOVEX] = -7 * 
+		player->data[PLAYER_MOVEX] = -7.5 * 
 			player->data[PLAYER_DIRX] * dtime;
-		player->data[PLAYER_MOVEZ] = -7 * 
+		player->data[PLAYER_MOVEZ] = -7.5 * 
 			player->data[PLAYER_DIRZ] * dtime;
 	}
 

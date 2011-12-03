@@ -1,5 +1,7 @@
 /* read tokens from text data stored in ROM */
 
+#include <stdio.h>
+
 char str[1024];
 int i;
 float f;

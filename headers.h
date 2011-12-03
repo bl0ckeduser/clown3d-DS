@@ -145,8 +145,8 @@ enum
 typedef struct
 {
 	int* vertnum;				/* array of vertex numbers */
-	int point_count;				/* triangle or quad ? the DS has to know ! */
-	void* next;					/* pointer to next face */
+	int point_count;			/* triangle or quad ? the DS has to know ! */
+	void* next;				/* pointer to next face */
 } face;
 
 /* Vertex */
@@ -161,7 +161,7 @@ typedef struct
 {
 	float color[3];				/* group color */
 	face* faces;				/* faces linked list */
-	void* next;					/* next group */
+	void* next;				/* next group */
 } model_group;
 
 /* Model */
@@ -254,6 +254,11 @@ extern void initFunction(void *va);
 extern void tickFunction(void *va);
 extern void drawFunction(void* va);
 extern void collisionFunction(void* va, void* vb);
+
+extern void gc_push(game_obj* ptr);
+extern void gc_collect(void);
+extern void gc_stop(void);
+
 
 #endif
 

@@ -7,14 +7,14 @@
 
 char bullet_model[] = "newgroup \
 color 255 255 0  \
-vertex -1 -0.5 0.5 \
-vertex -1 0.5 0.5 \
-vertex 1 -0.5 0.5 \
-vertex 1 0.5 0.5 \
-vertex 1 -0.5 -0.5 \
-vertex 1 0.5 -0.5 \
-vertex -1 -0.5 -0.5 \
-vertex -1 0.5 -0.5 \
+vertex -.1 -.05 .05 \
+vertex -.1 .05 .05 \
+vertex .1 -.05 .05 \
+vertex .1 .05 .05 \
+vertex .1 -.05 -.05 \
+vertex .1 .05 -.05 \
+vertex -.1 -.05 -.05 \
+vertex -.1 .05 -.05 \
 face 1 2 4 3 \
 face 3 4 6 5 \
 face 5 6 8 7 \
