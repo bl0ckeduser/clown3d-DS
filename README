@@ -5,6 +5,8 @@ clown3d.
 
 It's worth mentioning:
 The compiled ROM file is included here; it's "clown3d-DS.nds".
+All the game data and code is stored within the .nds file, no other
+files are needed to run the game.
 Also there is an early screenshot, "wip-screenshot.PNG".
 
 Also, here are the controls:
