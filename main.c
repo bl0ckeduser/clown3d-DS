@@ -1,22 +1,11 @@
 
 /*
  *	The Clown3D game demo
+ *	    (libnds port)
  *
  *   My first attempt at a 3D
  *   platformer. Very, very
  *   simple.
- */
-
-/*
- * 	This is a port to libnds
- *	of clown3d-20111112.
- *
- *	Note that it can also
- *	compile with SDL + GL
- *	like the usual clown3d.
- *
- *	The ported code is a bit
- *	messy, but not too much.
  */
 
 extern char door_model[];
