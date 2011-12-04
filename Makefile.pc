@@ -1,51 +1,48 @@
 # now works in BSD `make'
 
-CFLAGS = -DPC_TARGET `sdl-config --libs --cflags`
-
 CC ?= cc
-objects = bullet-mdl.o bullet.o collisions.o door-mdl.o door.o framerate.o gc.o genBoxes.o key-mdl.o key.o main.o maze-mdl.o mem-check.o model-draw.o model-load.o objlist.o player.o require.o string-read.o target.o turtle-mdl.o worldfile.o 
+CFLAGS =-DPC_TARGET `sdl-config --cflags`
+objects = bullet.o collisions.o door.o ds-trig.o framerate.o gc.o genBoxes.o key.o main.o mem-check.o model-data.o model-draw.o model-load.o objlist.o oop.o player.o require.o string-read.o target.o 
 
 headers = headers.h 
 
 clown: $(objects)
-	$(CC) -o demo $(objects) $(CFLAGS)
+	$(CC) -o demo $(objects) $(CFLAGS) `sdl-config --libs`
 
 clean:
 	rm -f demo $(objects)
 
 
-bullet-mdl.o: bullet-mdl.c $(headers)
-	$(CC) -c -o bullet-mdl.o bullet-mdl.c $(CFLAGS)
 bullet.o: bullet.c $(headers)
 	$(CC) -c -o bullet.o bullet.c $(CFLAGS)
 collisions.o: collisions.c $(headers)
 	$(CC) -c -o collisions.o collisions.c $(CFLAGS)
-door-mdl.o: door-mdl.c $(headers)
-	$(CC) -c -o door-mdl.o door-mdl.c $(CFLAGS)
 door.o: door.c $(headers)
 	$(CC) -c -o door.o door.c $(CFLAGS)
+ds-trig.o: ds-trig.c $(headers)
+	$(CC) -c -o ds-trig.o ds-trig.c $(CFLAGS)
 framerate.o: framerate.c $(headers)
 	$(CC) -c -o framerate.o framerate.c $(CFLAGS)
 gc.o: gc.c $(headers)
 	$(CC) -c -o gc.o gc.c $(CFLAGS)
 genBoxes.o: genBoxes.c $(headers)
 	$(CC) -c -o genBoxes.o genBoxes.c $(CFLAGS)
-key-mdl.o: key-mdl.c $(headers)
-	$(CC) -c -o key-mdl.o key-mdl.c $(CFLAGS)
 key.o: key.c $(headers)
 	$(CC) -c -o key.o key.c $(CFLAGS)
 main.o: main.c $(headers)
 	$(CC) -c -o main.o main.c $(CFLAGS)
-maze-mdl.o: maze-mdl.c $(headers)
-	$(CC) -c -o maze-mdl.o maze-mdl.c $(CFLAGS)
 mem-check.o: mem-check.c $(headers)
 	$(CC) -c -o mem-check.o mem-check.c $(CFLAGS)
+model-data.o: model-data.c $(headers)
+	$(CC) -c -o model-data.o model-data.c $(CFLAGS)
 model-draw.o: model-draw.c $(headers)
 	$(CC) -c -o model-draw.o model-draw.c $(CFLAGS)
 model-load.o: model-load.c $(headers)
 	$(CC) -c -o model-load.o model-load.c $(CFLAGS)
 objlist.o: objlist.c $(headers)
 	$(CC) -c -o objlist.o objlist.c $(CFLAGS)
+oop.o: oop.c $(headers)
+	$(CC) -c -o oop.o oop.c $(CFLAGS)
 player.o: player.c $(headers)
 	$(CC) -c -o player.o player.c $(CFLAGS)
 require.o: require.c $(headers)
@@ -54,7 +51,3 @@ string-read.o: string-read.c $(headers)
 	$(CC) -c -o string-read.o string-read.c $(CFLAGS)
 target.o: target.c $(headers)
 	$(CC) -c -o target.o target.c $(CFLAGS)
-turtle-mdl.o: turtle-mdl.c $(headers)
-	$(CC) -c -o turtle-mdl.o turtle-mdl.c $(CFLAGS)
-worldfile.o: worldfile.c $(headers)
-	$(CC) -c -o worldfile.o worldfile.c $(CFLAGS)
