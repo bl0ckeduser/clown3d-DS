@@ -90,6 +90,12 @@ int main(int argc, char* argv[])
 	/* Apparently, this will halt execution
 	   if something illegal is done */
 	defaultExceptionHandler();
+
+	/* Irq init code based on eKid's example.
+	   Added this in with hopes of increasing
+	   No$GBA's code quality rating. */
+	irqInit();
+	irqEnable(IRQ_VBLANK | IRQ_KEYS);
 #endif
 
 #ifdef PC_TARGET
