@@ -1,18 +1,24 @@
-This is an *extremely work-in-progress*, non-finalized 
-port to NDS (via the libnds API) of my 3d platformer engine, "clown3d". 
-The source here was forked from the November 12, 2011 snapshot of 
-clown3d.
 
-It's worth mentioning:
-The compiled ROM file is included here; it's "clown3d-DS.nds".
-All the game data and code is stored within the .nds file, no other
-files are needed to run the game.
-Also there is an early screenshot, "wip-screenshot.PNG".
+This is a (currently work-in-progress) port to NDS (via the libnds API) of my 
+3d platformer engine, "clown3d". 
 
-Also, here are the controls:
+-------------------------------------------------------------------
+
+- The compiled ROM file is included here; it's "clown3d-DS.nds".
+- All the game data and code is stored within the .nds file, no other
+  files are needed to run the game. There is no DLDI, so DLDI patching
+  is not necessary.
+- Screenshot: "wip-screenshot.PNG".
+
+The game controls are:
 	A button	shooting bullets
 	B button	jumping
 	D-pad		movement
+
+-------------------------------------------------------------------
+
+The source here was forked from the November 12, 2011 snapshot of 
+clown3d.
 
 The first phase of porting involved decreasing the
 vertex count of all the models to make them "fit" on
@@ -37,8 +43,6 @@ around.
 Right now, I'm still trying to improve the graphics and
 optimize the code. I have yet to test the program on a
 real console.
-
---------------------------------------------------------------
 
 Note that the current clown3D-ds can still be built for the
 PC using either Makefile.pc or mingw-build.bat; to build the
