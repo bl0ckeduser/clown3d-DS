@@ -257,6 +257,9 @@ collision_found2:
 				node->box.min.x += react.x;
 				node->box.max.x += react.x;
 
+				node->box.min.z += react.z;
+				node->box.max.z += react.z;
+
 				if(node->type==PLAYER && stair){
 					/* player hit a stair-mode object while
 					   moving on X and Z axes; walk the player 
@@ -265,9 +268,6 @@ collision_found2:
 					node->box.min.y += react.y;
 					node->box.max.y += react.y;
 				}
-
-				node->box.min.z += react.z;
-				node->box.max.z += react.z;
 
 				if(react.x || react.y || react.z) {
 					(*handler)(node, node2);

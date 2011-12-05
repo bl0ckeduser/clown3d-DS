@@ -164,8 +164,8 @@ void playerTick(game_obj* player)
 
 void playerCollide(game_obj* a, game_obj* b)
 {
-	/* First check if the player hit something solid,
-	   and adpapt its coordinates and "physics state"
+	/* If the player hit something solid,
+	   update its coordinates and "physics state"
 	   in consequence */
 	if(b->type == SOLID || b->type==DOOR) {
 
@@ -188,28 +188,12 @@ void playerCollide(game_obj* a, game_obj* b)
 		a->data[PLAYER_Z] = a->box.min.z + 10;
 
 	} else if(b->type == KEY && b->data[KEY_EXISTS]) {
-		/* pick up a key */
+		/* Pick up a key */
 		b->data[KEY_EXISTS] = 0;
 		a->data[PLAYER_KEYS]++;
-	} else {
-		/* UGLY HACK: cancel out collisions with
-		   objects which are not considered "solid".
-		   This should probably be handled in the
-		   collision system itself */
-		   
-		/* rewrite original player collision box and movement vector */
-		player->box.min.x = (float)(player->data[PLAYER_X] - 10);
-		player->box.min.y = (float)(player->data[PLAYER_Y] - 10);
-		player->box.min.z = (float)(player->data[PLAYER_Z] - 10);
-		player->box.max.x = (float)(player->data[PLAYER_X] + 10);
-		player->box.max.y = (float)(player->data[PLAYER_Y] + 10);
-		player->box.max.z = (float)(player->data[PLAYER_Z] + 10);
-		player->box.move.x = (float)player->data[PLAYER_MOVEX];
-		player->box.move.y = (float)player->data[PLAYER_MOVEY];
-		player->box.move.z = (float)player->data[PLAYER_MOVEZ];
-	}
+	} 
 
-	/* If the player hits the door and has a key,
+	/* If the player hits a door and has a key,
 	   open the door and get rid of the key */
 	if(b->type == DOOR && b->data[DOOR_CLOSED])
 	{
