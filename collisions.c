@@ -2,6 +2,9 @@
  * The "Clown" 3D Game Engine
  * Designed, debugged and perfected
  *  by Bl0ckeduser, 2011
+ *
+ * (i.e. on paper it wasn't this
+ *  complicated and full of workarounds)
  */
 
 /*
@@ -38,8 +41,7 @@ float smallestOfThree(float a, float b, float c)
 	return 0.0;
 }
 
-/* the following is a macro meant to eliminate otherwise redundant code
-   in the function resolveCollisions() */
+/* this macro eliminates redundancies in resolveCollisions. */
 
 #define resolveCollisions_checkVertex(XTYPE, YTYPE, ZTYPE, jump)				\
 		if(node->box.XTYPE.x > node2->box.min.x &&					\
@@ -50,7 +52,7 @@ float smallestOfThree(float a, float b, float c)
 		   node->box.ZTYPE.z < node2->box.max.z)					\
 		{										\
 			/* x_offs, y_offs, z_offs:						\
-			   difference between this vertice and					\
+			   difference between this vertex's coords and				\
 			   where it should be to resolve the 					\
 			   collision. Destination vertices					\
 			   are chosen based on movement						\
@@ -140,12 +142,27 @@ void resolveCollisions(game_obj* objs, void (*handler)(void*, void*))
 	float x_offs, y_offs, z_offs;
 	float ratio;
 
+	/*
+	 * Objects marked as "stairs" have normal 
+	 * Y-axis (vertical) collisions,
+	 * but move objects strictly on the Y axis
+	 * when X, Z collisions occur. The desired
+	 * effect is that the player can "walk up
+	 * stairs".
+	 *
+	 * Currently, there is no system for flagging
+	 * specific objects as stairs; setting stair = 1
+	 * below will make the collision code treat
+	 * everything as a stair.
+	 */
 	int stair = 0;
 
 	game_obj *node, *node2;
 
 	for(node = objs; node != NULL; node = node->next) {
+
 		if(node->type == SOLID)  continue;	/* heuristic: SOLIDs don't move ! */
+
 		for(node2 = objs; node2 != NULL; node2 = node2->next) {
 			if(node != node2 && node->type != NONE && node2->type != NONE) {
 				/* Check if any of the current boxe's
@@ -156,13 +173,20 @@ void resolveCollisions(game_obj* objs, void (*handler)(void*, void*))
 				   combinations of these two vertice's
 				   x,y,z coordinates. */
 
+				/* Initialize reaction vector */
 				react.x = react.y = react.z = 0.0;
 
 				move.x = node->box.move.x;
 				move.y = node->box.move.y;
 				move.z = node->box.move.z;
 
-				node->box.min.x -= move.x;
+				/*
+				 * We first resolve collisions
+				 * resulting from movement
+				 * on the Y axis, setting move.x = move.z = 0
+				 * to ensure the reaction vector is strictly Y-axis
+				 */
+				node->box.min.x -= move.x;	/* cancel out x, z movement */
 				node->box.max.x -= move.x;
 				node->box.min.z -= move.z;
 				node->box.max.z -= move.z;
@@ -187,20 +211,29 @@ collision_found:
 					(*handler)(node2, node);
 				}
 
-				/* check X, Z axes */
+				/*
+				 * Now we solve collisions resulting from
+				 * movement on the X and Z axes. Notice that
+				 * we keep the collision-resolved Y coordinate
+				 * we just obtained and set move.y = 0, so that the 
+				 * reaction vector is strictly in the X and Z axes.
+				 */
 
 				react.x = react.y = react.z = 0.0;
 
+				/* restore x,z displacement we cancelled out
+				   earlier on */
 				node->box.min.x += move.x;
 				node->box.max.x += move.x;
 				node->box.min.z += move.z;
 				node->box.max.z += move.z;
 				node->box.move.x = move.x;
 				node->box.move.z = move.z;
+
 				node->box.move.y = 0.0;
 
-				/* hack for player walking on stairs */
 				if(stair){
+					/* stairs mode */
 					resolveCollisions_checkVertex_stair(min, min, min, collision_found2);
 					resolveCollisions_checkVertex_stair(min, min, max, collision_found2);
 					resolveCollisions_checkVertex_stair(min, max, min, collision_found2);
@@ -224,8 +257,10 @@ collision_found2:
 				node->box.min.x += react.x;
 				node->box.max.x += react.x;
 
-				/* hack for player walking on stairs */
 				if(node->type==PLAYER && stair){
+					/* player hit a stair-mode object while
+					   moving on X and Z axes; walk the player 
+					   up the stair */
 					node->box.move.y = 1.0f;
 					node->box.min.y += react.y;
 					node->box.max.y += react.y;
@@ -239,11 +274,14 @@ collision_found2:
 					(*handler)(node2, node);
 				}
 
-				/* re-compose move vector */
+				/*
+				 * Restore the move vector as
+				 * it was prior to the Y axis / X, Z axes
+				 * separation for further use
+				 */
 				node->box.move.x = move.x;
 				node->box.move.y = move.y;
 				node->box.move.z = move.z;
-
 			}
 		}
 	}
