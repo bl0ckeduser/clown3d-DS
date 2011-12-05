@@ -22,11 +22,9 @@
 + Optimizied key and door models; game runs at full speed
 + Improved NO$GBA's quality rating to "good"
 
-- Optimize bullets ? They seem to cause some lag
-  I doubt they can be further optimized
+- *Test the game on real console !*
 - Add lighting/shininess/antialiasing/you-name-it effects
   to make things nicer ?
-- *Test the game on real console !*
-
-
+	I doubt it's going to happen. This is complicated to set up.
+	My existing normal calculation code (not included here) doesn't work.
 

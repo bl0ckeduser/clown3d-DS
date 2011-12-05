@@ -1,6 +1,9 @@
 
 This is a (currently work-in-progress) port to NDS (via the libnds API) of my 
-3d platformer engine, "clown3d". 
+3d platformer engine, "clown3d".
+
+Thanks Dovoto for the useful example code and mtheall for the tech
+support.
 
 -------------------------------------------------------------------
 

@@ -25,12 +25,6 @@ extern char bullet_model[];
 /* vertex count checking */
 int vc;
 
-/* lighting and materials for PC version */
-GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
-GLfloat diffuse_light[] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat ambient_light[] = { 0.5, 0.5, 0.5, 1.0 };
-GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-
 /* SDL event structures */
 SDL_Event event;
 Uint8 *keystate;
@@ -162,21 +156,21 @@ int main(int argc, char* argv[])
 
 	printf("* STARTING GAME *\n");
 
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0) {
 		video_info = (SDL_VideoInfo *)SDL_GetVideoInfo();
 
 		display = SDL_SetVideoMode(
-		          640, 480,
+		          256, 192,
 		          video_info -> vfmt -> BitsPerPixel,
 		          SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
 
 		require(display != NULL);
-	#else
+#else
 	if(1){
-	#endif
+#endif
 
-		#ifndef PC_TARGET
+#ifndef PC_TARGET
 		/* 
 		   NDS 3D mode init code copied from
 		   nehe3.cpp by Dovoto
@@ -198,36 +192,14 @@ int main(int argc, char* argv[])
   
 		// Set our viewport to be the same size as the screen
 		glViewport(0,0,255,191);
-		#endif
-
-		#ifdef PC_TARGET
-		/* Lighting and materials for the PC version.
-		   Won't build with libnds, because it has a
-		   slightly different GL. Also, I'm not sure
-		   whether the DS supports all these effects. */
-	
+#else
+		/*
+		 * With standard OpenGL we
+		 * must manually enable
+		 * Z-buffering
+		 */
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LIGHTING);
-
-		glEnable(GL_LIGHT0);
-		glEnable(GL_LIGHT1);
-
-		glEnable(GL_COLOR_MATERIAL);
-		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-		glEnable(GL_NORMALIZE);
-
-		light_position[0] = light_position[2] = 0.0f;
-		light_position[1] = 60.0f;
-
-		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
-
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse_light);
-
-		#endif
+#endif
 
 		while(1) {
 #ifdef PC_TARGET
@@ -338,13 +310,6 @@ void runGameFrame(void)
 
 
 #ifdef PC_TARGET
-	/* the original lighting code.
-	   doesn't build with libnds */
-	light_position[0] = (GLfloat)(player->data[PLAYER_X] - player->data[PLAYER_DIRX]*5)/10.0;
-	light_position[1] = (GLfloat)(player->data[PLAYER_Y]+10)/10.0;
-	light_position[2] = (GLfloat)(player->data[PLAYER_Z]-player->data[PLAYER_DIRZ]*5)/10.0;
-	glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-
 	vc = 0;		/* vertex count checking on PC */
 #endif
 
