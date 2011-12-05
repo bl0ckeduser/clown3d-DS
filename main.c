@@ -85,6 +85,9 @@ int main(int argc, char* argv[])
 	/* SDL video stuff */
 	SDL_Surface* display;
 	SDL_VideoInfo* video_info;
+	
+	/* select world via first argument */
+	if(argc > 1)	sscanf(argv[1], "%d", &chosen_world);
 #else
 	/* allow text on lower screen */
 	consoleDemoInit();	
@@ -266,18 +269,22 @@ void runGameFrame(void)
 	 * Drawing code follows 
 	 */
 
-	#ifdef PC_TARGET
+#ifdef PC_TARGET
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-	#endif
+#endif
 
 	/* Setup the camera */
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-#ifdef PC_TARGET
-	gluPerspective(60.0f, 640.0f/480.0f, 0.1f, 100.0f);
-#else
 	gluPerspective(60.0f, 255.0f/192.0f, 0.1f, 100.0f);
-	glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE);	/* copied from Dovoto */
+
+#ifndef PC_TARGET
+	/*
+	 * glPolyFmt is a libnds-specific call.
+	 * The following line was copied from an
+	 * example by Dovoto.
+	 */
+	glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE);
 #endif
 
 	glMatrixMode(GL_MODELVIEW);
@@ -330,7 +337,7 @@ void runGameFrame(void)
 #ifdef PC_TARGET
 	/* vertex count checking on PC */
 	char buf[256];
-	sprintf(buf, "clown3d-DS :: PC build :: %d vertices", vc);
+	sprintf(buf, "%d vertices", vc);
 	SDL_WM_SetCaption(buf, NULL);	
 	if(vc > 6144){
 		printf("Vertex count too high: %d\n", vc);
