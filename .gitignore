@@ -3,4 +3,5 @@
 build/*
 demo
 *.exe
+*.elf
 stdout.txt

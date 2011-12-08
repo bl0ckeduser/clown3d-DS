@@ -56,9 +56,7 @@ void playerTick(game_obj* player)
 		player->data[PLAYER_MOVEY] = 0;
 	}
 
-	/* Convert the player angle to a unit vector,
-	   converting the said angle to radians along
-	   the way */
+	/* Convert the player angle to a unit vector */
 #ifdef PC_TARGET
 	player->data[PLAYER_DIRX] = 
 		(float)sin(player->data[PLAYER_ANGLE] / 360.0 * (2*3.14));
@@ -92,8 +90,8 @@ void playerTick(game_obj* player)
 	   from an example by Dovoto */
 	scanKeys();
 	u16 keys = keysHeld();
-	shoot = (keys & KEY_A);
-	jump = (keys & KEY_B);
+	jump = (keys & KEY_A);
+	shoot = (keys & KEY_B);
 	left = (keys & KEY_LEFT);
 	right = (keys & KEY_RIGHT);
 	down = (keys & KEY_DOWN);
