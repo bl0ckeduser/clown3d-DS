@@ -1,6 +1,6 @@
-
-This is a (currently work-in-progress) port to NDS (via the libnds API) of my 
-3d platformer engine, "clown3d".
+This is a port to NDS of my 3d platformer engine, "clown3d".
+The development environment used is the devKitPro toolchain
+and libnds (both available at http://devkitpro.org).
 
 Thanks Dovoto for the useful example code and mtheall for the tech
 support.
