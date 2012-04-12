@@ -7,6 +7,12 @@ support.
 
 -------------------------------------------------------------------
 
+ Currently only the "maze" world successfully loads on the
+ real console. I'm going to try to fix the default world so
+ it also loads.
+
+-------------------------------------------------------------------
+
 - The compiled ROM file is included here; it's "clown3d-DS.nds".
 - All the game data and code is stored within the .nds file, no other
   files are needed to run the game. There is no DLDI, so DLDI patching

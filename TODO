@@ -22,9 +22,9 @@
 + Optimizied key and door models; game runs at full speed
 + Improved NO$GBA's quality rating to "good"
 
-- *Test the game on real console !*
-- Add lighting/shininess/antialiasing/you-name-it effects
-  to make things nicer ?
-	I doubt it's going to happen. This is complicated to set up.
-	My existing normal calculation code (not included here) doesn't work.
++ *Test the game on real console !*
+  The maze world loads & runs perfectly, but the 
+  default world gives a black screen.
+  I suspect maxed out polygon count.
 
+- Get the default world to load on the real console.
