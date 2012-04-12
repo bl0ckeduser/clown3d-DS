@@ -7,9 +7,9 @@ support.
 
 -------------------------------------------------------------------
 
- Currently only the "maze" world successfully loads on the
- real console. I'm going to try to fix the default world so
- it also loads.
+ * Currently only the "maze" world successfully loads on the
+   real console. I'm going to try to fix the default world so
+   it also loads.
 
 -------------------------------------------------------------------
 
@@ -25,6 +25,13 @@ The game controls are:
 	D-pad		movement
 
 -------------------------------------------------------------------
+
+DEVELOPMENT NOTES
+
+ * The code doesn't seem to build OK with devKitARM r38.
+   It does however build right with devKitARM r37.
+   With devKitARM >= 38 it might be necessary to tweak the
+   Makefile (remove "no-fpu").
 
 The source here was forked from the November 12, 2011 snapshot of 
 clown3d.
@@ -49,9 +56,7 @@ timing, etc.)
 Following that, several quirks in libnds had to be worked
 around.
 
-Right now, I'm still trying to improve the graphics and
-optimize the code. I have yet to test the program on a
-real console.
+                           ----
 
 Note that the current clown3D-ds can still be built for the
 PC using either Makefile.pc or mingw-build.bat; to build the
