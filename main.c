@@ -12,7 +12,9 @@ extern char door_model[];
 extern char key_model[];
 extern char maze_model[];	/* maze world */
 extern char world_model[];	/* default world */
+extern char world_lowres[];	/* default world, stripped down to fit on the NDS */
 extern char turtle_model[];
+extern char turtle_model_lowpoly[];
 extern char bullet_model[];
 
 #include <stdio.h>
@@ -94,13 +96,13 @@ int main(int argc, char* argv[])
 	videoSetMode(MODE_FB0);
 	vramSetBankA(VRAM_A_LCD);
 
-	printf("clown3d demo by bl0ckeduser\n");
-	printf("DS port based on 3d example code written by Dovoto (thanks !)\n");
+	printf("Clown3d platformer engine\n by Bl0ckeduser\n");
+	printf("DS port based on 3d example code written by Dovoto (thanks !)\n\n");
 	printf("Made with devKitPro and libnds\n");
 	printf("built %s %s\n\n", __DATE__, __TIME__);
 
 	/* let the player choose one of two worlds */
-	printf("Press A to play in the default world; press B to play in the maze world\n\n");
+	printf("Press A for 'default' world\nPress B for 'maze' world\n\n");
 	while(1){
 		scanKeys();
 		if(keysHeld() & KEY_A){
@@ -118,7 +120,7 @@ int main(int argc, char* argv[])
 #endif
 
 	printf("Loading turtle model...");	
-	turtleModel = loadModel(turtle_model);		/* player model */
+	turtleModel = loadModel(turtle_model_lowpoly);	/* player model */
 	printf("done.\n");
 
 	printf("Loading bullet model...");	
@@ -147,7 +149,7 @@ int main(int argc, char* argv[])
 
 	printf("Loading world model... ");
 	if(chosen_world == 1){
-		worldModel = loadModel(world_model);
+		worldModel = loadModel(world_lowres);
 	} else {
 		worldModel = loadModel(maze_model);
 	}

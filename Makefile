@@ -1,4 +1,4 @@
-# [this is a copy of the libnds all-purpose template Makefile]
+# [this is based on the libnds (http://devkitpro.org) template Makefile]
 
 #---------------------------------------------------------------------------------
 .SUFFIXES:
@@ -9,6 +9,19 @@ $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>dev
 endif
 
 include $(DEVKITARM)/ds_rules
+
+ifeq ($(strip $(GAME_SUBTITLE1)),)
+GAME_SUBTITLE1	:=	mini 3d platformer engine by Bl0ckeduser
+endif
+
+ifeq ($(strip $(GAME_SUBTITLE2)),)
+GAME_SUBTITLE2	:=	Made with devkitpro (http://devkitpro.org/)
+endif
+
+ifeq ($(strip $(GAME_ICON)),)
+GAME_ICON      :=      $(DEVKITPRO)/libnds/icon.bmp
+endif
+
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
@@ -36,7 +49,7 @@ CFLAGS	+=	$(INCLUDE) -DARM9
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -mno-fpu -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
