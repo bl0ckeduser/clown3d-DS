@@ -8,14 +8,12 @@ and to mtheall for the technical support.
 
 -------------------------------------------------------------------
 
-Notice: as of writing, this game will not run in the NO$GBA
-	emulator.
-
 - The compiled ROM file is included here; it's "clown3d-DS.nds".
 - All the game data and code is stored within the .nds file, no other
   files are needed to run the game. There is no DLDI, so DLDI patching
   is not necessary.
 - Screenshot: "wip-screenshot.PNG".
+- Works fully on real console and most emulators
 
 The game controls are:
 	A button	jumping
