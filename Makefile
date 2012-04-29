@@ -8,20 +8,27 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-include $(DEVKITARM)/ds_rules
-
 ifeq ($(strip $(GAME_SUBTITLE1)),)
-GAME_SUBTITLE1	:=	mini 3d platformer engine by Bl0ckeduser
+GAME_SUBTITLE1	:=	Mini 3d platformer engine
 endif
 
 ifeq ($(strip $(GAME_SUBTITLE2)),)
-GAME_SUBTITLE2	:=	Made with devkitpro (http://devkitpro.org/)
+GAME_SUBTITLE2	:=	by Bl0ckeduser using devkitPro
 endif
 
+# My custom icon was created in GIMP from a screenshot
+# of the game. I followed the mini-tutorial here:
+# http://wiki.gbatemp.net/wiki/Custom_Icons
+# Big thanks to whoever wrote it ;)
+# I also had to palette-ify it:
+# http://docs.gimp.org/en/gimp-image-convert-indexed.html
+# using a 16-color palette. 256 colors failed.
 ifeq ($(strip $(GAME_ICON)),)
-GAME_ICON      :=      $(DEVKITPRO)/libnds/icon.bmp
+GAME_ICON      :=	$(CURDIR)/../icon.bmp
 endif
 
+
+include $(DEVKITARM)/ds_rules
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
@@ -40,7 +47,7 @@ INCLUDES	:=	include
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O3\
  			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math \
 			$(ARCH)
