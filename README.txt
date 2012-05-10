@@ -21,3 +21,6 @@ The game controls are:
 	D-pad		movement
 
 -------------------------------------------------------------------
+
+
+http://sites.google.com/site/bl0ckeduserssoftware/projects#clown3d-ds
