@@ -1,6 +1,8 @@
 #include "headers.h"
 #include <math.h>
 
+char jump_clean = 0;
+
 game_obj* newPlayer(game_obj* list, float x, float y, float z)
 {
 	game_obj* play = newListNode(list);
@@ -136,10 +138,12 @@ void playerTick(game_obj* player)
 			player->data[PLAYER_DIRZ] * dtime;
 	}
 
-	if(jump && player->data[PLAYER_ON_PLATFORM])
-	{
-		player->data[PLAYER_YVEL] = MAX_YVEL;
-	}
+	if(jump) {
+		if(jump_clean && player->data[PLAYER_ON_PLATFORM]) {
+				player->data[PLAYER_YVEL] = MAX_YVEL;
+				jump_clean = 0;
+		}
+	} else jump_clean = 1;
 
 	player->data[PLAYER_ON_PLATFORM]  = 0.0;
 
