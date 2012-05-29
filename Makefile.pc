@@ -1,7 +1,7 @@
 # now works in BSD `make'
 
 CC ?= cc
-CFLAGS =-DPC_TARGET `sdl-config --cflags`
+CFLAGS =-DPC_TARGET `sdl-config --cflags` -lGL -lGLU
 objects = bullet.o collisions.o door.o ds-trig.o framerate.o gc.o genBoxes.o key.o main.o mem-check.o model-data.o model-draw.o model-load.o objlist.o oop.o player.o require.o string-read.o target.o 
 
 headers = headers.h 

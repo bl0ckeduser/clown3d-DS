@@ -1,7 +1,9 @@
 /*
  * The "Clown" 3D Game Engine
  * Designed, debugged and perfected
- *  by Bl0ckeduser, 2011
+ *  by Bl0ckeduser, 2011.
+ *
+ * Edge evasion added May 2012
  *
  * (i.e. on paper it wasn't this
  *  complicated and full of workarounds)
@@ -15,6 +17,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "headers.h"
+
+int which;
 
 /* Compares using absolute values, equivalent
    to measuring the magnitude of a 1-dimensional
@@ -100,14 +104,23 @@ float smallestOfThree(float a, float b, float c)
 				y_offs / node->box.move.y,					\
 				z_offs / node->box.move.z);					\
 												\
+			/* 									\
+			 * collision axis register used by edge-evasion code			\
+			 * ("wall direction")							\
+			 */									\
+			which = 0;								\
+			if(ratio == x_offs / node->box.move.x) which = 1;			\
+			if(ratio == y_offs / node->box.move.y) which = 2;			\
+			if(ratio == z_offs / node->box.move.z) which = 3;			\
+												\
 			/* Cheap way to avoid glitches. Normally,				\
 			   ratio should be between 0 and 1. */					\
 			if(ratio < -2.0)  ratio = 0.0;						\
 												\
 			/* Cheap fix for another glitch. Avoid					\
-			   inifinite collision-solving loops (player				\
+			   infinite collision-solving loops (player				\
 			   gets stuck) */							\
-			ratio *= 1.01;								\
+			ratio *= 1.00001;							\
 												\
 			react.x = node->box.move.x * ratio;					\
 			react.y = node->box.move.y * ratio;					\
@@ -232,6 +245,9 @@ collision_found:
 
 				node->box.move.y = 0.0;
 
+				/* clear the edge-evasion register */
+				which = 0;
+
 				if(stair){
 					/* stairs mode */
 					resolveCollisions_checkVertex_stair(min, min, min, collision_found2);
@@ -253,6 +269,19 @@ collision_found:
 					resolveCollisions_checkVertex(max, max, max, collision_found2);
 				}
 collision_found2:
+
+				/* Simple edge-evasion, based on PypeBros' suggestion. 
+				   When a collision occurs,the projection of the player's 
+				   move vector on the "wall direction" (obtained here from 
+				   earlier collision calculations) is added for edge evasion. */
+				if(node->type == PLAYER && which == 3) {
+					node->box.min.x += move.x;
+					node->box.max.x += move.x;					
+				}
+				if(node->type == PLAYER && which == 1) {
+					node->box.min.z += move.z;
+					node->box.max.z += move.z;
+				}
 
 				node->box.min.x += react.x;
 				node->box.max.x += react.x;

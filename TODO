@@ -28,3 +28,9 @@
   I suspect maxed out polygon count.
 
 + Get the default world to load on the real console.
+
+
+- Fix the collision resolve jitter.
+   (I must confess that I've seen in it in a professional
+    3d DS game once though)
+- Test the new edge-evasion code
