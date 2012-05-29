@@ -275,12 +275,12 @@ collision_found2:
 				   move vector on the "wall direction" (obtained here from 
 				   earlier collision calculations) is added for edge evasion. */
 				if(node->type == PLAYER && which == 3) {
-					node->box.min.x += move.x;
-					node->box.max.x += move.x;
+					node->box.min.x += move.x * 0.4;
+					node->box.max.x += move.x * 0.4;
 				}
 				if(node->type == PLAYER && which == 1) {
-					node->box.min.z += move.z;
-					node->box.max.z += move.z;
+					node->box.min.z += move.z * 0.4;
+					node->box.max.z += move.z * 0.4;
 				}
 
 				node->box.min.x += react.x;
