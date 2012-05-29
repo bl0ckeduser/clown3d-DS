@@ -138,7 +138,9 @@ float smallestOfThree(float a, float b, float c)
 			react.y = node->box.move.y * ratio;					\
 			react.z = node->box.move.z * ratio;					\
 												\
-			if(ratio == 0.0 && node->box.move.y == 0.0){ glitch = 1; goto foundglitch; }\
+			if(node->type == PLAYER && 						\
+			    ratio == 0.0 && node->box.move.y == 0.0){ 				\
+				glitch = 1; goto foundglitch; }					\
 												\
 			goto jump;								\
 		}										\
@@ -294,12 +296,12 @@ collision_found2:
 				   move vector on the "wall direction" (obtained here from 
 				   earlier collision calculations) is added for edge evasion. */
 				if(node->type == PLAYER && which == 3 && !glitch && !cc) {
-					node->box.min.x += move.x * 0.7;
-					node->box.max.x += move.x * 0.7;
+					node->box.min.x += move.x * 0.4;
+					node->box.max.x += move.x * 0.4;
 				}
 				if(node->type == PLAYER && which == 1 && !glitch && !cc) {
-					node->box.min.z += move.z * 0.7;
-					node->box.max.z += move.z * 0.7;
+					node->box.min.z += move.z * 0.4;
+					node->box.max.z += move.z * 0.4;
 				}
 
 				node->box.min.x += react.x;
