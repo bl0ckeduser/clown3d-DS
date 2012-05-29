@@ -276,7 +276,7 @@ collision_found2:
 				   earlier collision calculations) is added for edge evasion. */
 				if(node->type == PLAYER && which == 3) {
 					node->box.min.x += move.x;
-					node->box.max.x += move.x;					
+					node->box.max.x += move.x;
 				}
 				if(node->type == PLAYER && which == 1) {
 					node->box.min.z += move.z;

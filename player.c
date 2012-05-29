@@ -184,10 +184,12 @@ void playerCollide(game_obj* a, game_obj* b)
 		   it results from movement on the 
 		   Y axis */
 
-		a->data[PLAYER_X] = a->box.min.x + 10;
+		if(a->box.move.y == 0)
+			a->data[PLAYER_X] = a->box.min.x + 10;
 		if(a->box.move.y != 0)
 			a->data[PLAYER_Y] = a->box.min.y + 10;
-		a->data[PLAYER_Z] = a->box.min.z + 10;
+		if(a->box.move.y == 0)
+			a->data[PLAYER_Z] = a->box.min.z + 10;
 
 	} else if(b->type == KEY && b->data[KEY_EXISTS]) {
 		/* Pick up a key */
