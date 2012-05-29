@@ -8,7 +8,7 @@ game_obj* newPlayer(game_obj* list, float x, float y, float z)
 	game_obj* play = newListNode(list);
 
 	play->type = PLAYER;
-	play->data = (float *)malloc(20 * sizeof(float));
+	play->data = (float *)malloc(26 * sizeof(float));
 	play->data[PLAYER_X] = x;
 	play->data[PLAYER_Y] = y;
 	play->data[PLAYER_Z] = z;
@@ -147,9 +147,11 @@ void playerTick(game_obj* player)
 
 	player->data[PLAYER_ON_PLATFORM]  = 0.0;
 
-	player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
-	player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
-	player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
+	if(!player->data[PLAYER_GLITCHED]) {
+		player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
+		player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
+		player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
+	}
 
 	/* Player collision box and movement vector */
 	player->box.min.x = (float)(player->data[PLAYER_X] - 10);

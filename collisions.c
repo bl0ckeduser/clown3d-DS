@@ -19,6 +19,7 @@
 #include "headers.h"
 
 int which;
+static int cf = 0;
 
 /* Compares using absolute values, equivalent
    to measuring the magnitude of a 1-dimensional
@@ -110,8 +111,19 @@ float smallestOfThree(float a, float b, float c)
 			 */									\
 			which = 0;								\
 			if(ratio == x_offs / node->box.move.x) which = 1;			\
-			if(ratio == y_offs / node->box.move.y) which = 2;			\
-			if(ratio == z_offs / node->box.move.z) which = 3;			\
+			else if(ratio == y_offs / node->box.move.y) which = 2;			\
+			else if(ratio == z_offs / node->box.move.z) which = 3;			\
+												\
+			/* in the case of a corner, wall-direction is ambiguous and must be	\
+			   inferred from player direction */					\
+			if(which && !cc)							\
+			 if(fabs(x_offs / node->box.move.x - z_offs / node->box.move.z) < 2.0) {\
+			  if(fabs(move.x) > fabs(move.z)) {					\
+			   ratio = x_offs / node->box.move.x; which = 1;			\
+			  } else {								\
+			   ratio = z_offs / node->box.move.z; which = 3;			\
+			  }									\
+			 }									\
 												\
 			/* Cheap way to avoid glitches. Normally,				\
 			   ratio should be between 0 and 1. */					\
@@ -125,6 +137,8 @@ float smallestOfThree(float a, float b, float c)
 			react.x = node->box.move.x * ratio;					\
 			react.y = node->box.move.y * ratio;					\
 			react.z = node->box.move.z * ratio;					\
+												\
+			if(ratio == 0.0 && node->box.move.y == 0.0){ glitch = 1; goto foundglitch; }\
 												\
 			goto jump;								\
 		}										\
@@ -154,6 +168,9 @@ void resolveCollisions(game_obj* objs, void (*handler)(void*, void*))
 	vector move, react;
 	float x_offs, y_offs, z_offs;
 	float ratio;
+	int cc;
+	int glitch = 0;
+	int n;
 
 	/*
 	 * Objects marked as "stairs" have normal 
@@ -175,6 +192,8 @@ void resolveCollisions(game_obj* objs, void (*handler)(void*, void*))
 	for(node = objs; node != NULL; node = node->next) {
 
 		if(node->type == SOLID)  continue;	/* heuristic: SOLIDs don't move ! */
+		cc = 0;
+		glitch = 0;
 
 		for(node2 = objs; node2 != NULL; node2 = node2->next) {
 			if(node != node2 && node->type != NONE && node2->type != NONE) {
@@ -274,13 +293,13 @@ collision_found2:
 				   When a collision occurs,the projection of the player's 
 				   move vector on the "wall direction" (obtained here from 
 				   earlier collision calculations) is added for edge evasion. */
-				if(node->type == PLAYER && which == 3) {
-					node->box.min.x += move.x * 0.4;
-					node->box.max.x += move.x * 0.4;
+				if(node->type == PLAYER && which == 3 && !glitch && !cc) {
+					node->box.min.x += move.x * 0.7;
+					node->box.max.x += move.x * 0.7;
 				}
-				if(node->type == PLAYER && which == 1) {
-					node->box.min.z += move.z * 0.4;
-					node->box.max.z += move.z * 0.4;
+				if(node->type == PLAYER && which == 1 && !glitch && !cc) {
+					node->box.min.z += move.z * 0.7;
+					node->box.max.z += move.z * 0.7;
 				}
 
 				node->box.min.x += react.x;
@@ -299,10 +318,12 @@ collision_found2:
 				}
 
 				if(react.x || react.y || react.z) {
+					++cc;
 					(*handler)(node, node2);
 					(*handler)(node2, node);
 				}
 
+				foundglitch:
 				/*
 				 * Restore the move vector as
 				 * it was prior to the Y axis / X, Z axes
@@ -311,6 +332,21 @@ collision_found2:
 				node->box.move.x = move.x;
 				node->box.move.y = move.y;
 				node->box.move.z = move.z;
+			}
+		}
+
+		/* last resort for player collisions too complex for engine */
+		if(node->type == PLAYER) {
+			player->data[PLAYER_GLITCHED] = 0;
+			if(glitch) {
+				player->data[PLAYER_GLITCHED] = 1;
+				player->data[PLAYER_X] -= player->data[PLAYER_GMX];
+				player->data[PLAYER_Z] -= player->data[PLAYER_GMZ];
+				cf = 0;
+			} else if(++cf >= 5 && (move.x || move.z)){
+				player->data[PLAYER_GMX] = move.x;
+				player->data[PLAYER_GMZ] = move.z;
+				cf = 0;
 			}
 		}
 	}

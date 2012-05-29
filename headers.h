@@ -74,6 +74,7 @@ typedef struct game_obj
 	vector coords;
 	float rot;
 	collisionBox box;
+	collisionBox last_good;
 	float* data;
 	void* prev;
 	void* next;
@@ -98,7 +99,10 @@ enum
 	PLAYER_MOVEY,
 	PLAYER_MOVEZ,
 	PLAYER_KEYS,
-	PLAYER_BULLET_TIMER
+	PLAYER_BULLET_TIMER,
+	PLAYER_GMX,
+	PLAYER_GMZ,
+	PLAYER_GLITCHED
 };
 
 /* KEY */
