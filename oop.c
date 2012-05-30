@@ -95,3 +95,16 @@ void collisionFunction(void* va, void* vb)
 	}
 }
 
+void eeFunction(void* va)
+{
+	game_obj* a = va;
+
+	if(a == NULL) return;
+	
+	switch(a->type){
+	case PLAYER:
+		playerEdgeEvade(a);
+		break;
+	}	
+}
+

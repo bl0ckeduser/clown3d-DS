@@ -266,6 +266,9 @@ void runGameFrame(void)
 
 	resolveCollisions(objs, collisionFunction);
 
+	/* Edge-evasion */
+	for(node = objs; node; node = node->next)
+		eeFunction(node);
 
 	/*
 	 * Drawing code follows 

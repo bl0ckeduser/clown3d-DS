@@ -19,7 +19,6 @@
 #include "headers.h"
 
 int which;
-static int cf = 0;
 
 /* Compares using absolute values, equivalent
    to measuring the magnitude of a 1-dimensional
@@ -116,7 +115,7 @@ float smallestOfThree(float a, float b, float c)
 												\
 			/* in the case of a corner, wall-direction is ambiguous and must be	\
 			   inferred from player direction */					\
-			if(which && !cc)							\
+			if(which)								\
 			 if(fabs(x_offs / node->box.move.x - z_offs / node->box.move.z) < 2.0) {\
 			  if(fabs(move.x) > fabs(move.z)) {					\
 			   ratio = x_offs / node->box.move.x; which = 1;			\
@@ -137,10 +136,6 @@ float smallestOfThree(float a, float b, float c)
 			react.x = node->box.move.x * ratio;					\
 			react.y = node->box.move.y * ratio;					\
 			react.z = node->box.move.z * ratio;					\
-												\
-			if(node->type == PLAYER && 						\
-			    ratio == 0.0 && node->box.move.y == 0.0){ 				\
-				glitch = 1; goto foundglitch; }					\
 												\
 			goto jump;								\
 		}										\
@@ -170,9 +165,7 @@ void resolveCollisions(game_obj* objs, void (*handler)(void*, void*))
 	vector move, react;
 	float x_offs, y_offs, z_offs;
 	float ratio;
-	int cc;
-	int glitch = 0;
-	int n;
+	int ee;
 
 	/*
 	 * Objects marked as "stairs" have normal 
@@ -194,8 +187,8 @@ void resolveCollisions(game_obj* objs, void (*handler)(void*, void*))
 	for(node = objs; node != NULL; node = node->next) {
 
 		if(node->type == SOLID)  continue;	/* heuristic: SOLIDs don't move ! */
-		cc = 0;
-		glitch = 0;
+
+		ee = 0;
 
 		for(node2 = objs; node2 != NULL; node2 = node2->next) {
 			if(node != node2 && node->type != NONE && node2->type != NONE) {
@@ -292,16 +285,20 @@ collision_found:
 collision_found2:
 
 				/* Simple edge-evasion, based on PypeBros' suggestion. 
-				   When a collision occurs,the projection of the player's 
-				   move vector on the "wall direction" (obtained here from 
-				   earlier collision calculations) is added for edge evasion. */
-				if(node->type == PLAYER && which == 3 && !glitch && !cc) {
-					node->box.min.x += move.x * 0.4;
-					node->box.max.x += move.x * 0.4;
+				   When a collision occurs, a request is made to add the  
+				   the projection of the player's move vector on the "wall direction" 
+				   (obtained here from earlier collision calculations). The
+				   edge-evasion module will cancel all edge-evasion if a conflict
+				   (edge-evasion in both wall-directions requested) is detected.
+				 */
+
+				if(which == 3) {
+					edge_evade(node, node2, 0);
+					ee = 1;
 				}
-				if(node->type == PLAYER && which == 1 && !glitch && !cc) {
-					node->box.min.z += move.z * 0.4;
-					node->box.max.z += move.z * 0.4;
+				if(which == 1) {
+					edge_evade(node, node2, 1);
+					ee = 1;
 				}
 
 				node->box.min.x += react.x;
@@ -320,12 +317,10 @@ collision_found2:
 				}
 
 				if(react.x || react.y || react.z) {
-					++cc;
 					(*handler)(node, node2);
 					(*handler)(node2, node);
 				}
 
-				foundglitch:
 				/*
 				 * Restore the move vector as
 				 * it was prior to the Y axis / X, Z axes
@@ -337,20 +332,10 @@ collision_found2:
 			}
 		}
 
-		/* last resort for player collisions too complex for engine */
-		if(node->type == PLAYER) {
-			player->data[PLAYER_GLITCHED] = 0;
-			if(glitch) {
-				player->data[PLAYER_GLITCHED] = 1;
-				player->data[PLAYER_X] -= player->data[PLAYER_GMX];
-				player->data[PLAYER_Z] -= player->data[PLAYER_GMZ];
-				cf = 0;
-			} else if(++cf >= 5 && (move.x || move.z)){
-				player->data[PLAYER_GMX] = move.x;
-				player->data[PLAYER_GMZ] = move.z;
-				cf = 0;
-			}
-		}
+		/* If no edge-evasion requests occured in this collision
+		   code frame, clear the edge-evasion data. (The edge-evasion
+		   module is a state machine) */
+		if(!ee)	edge_evade(node, NULL, 0);
 	}
 }
 

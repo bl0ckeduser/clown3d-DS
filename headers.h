@@ -74,7 +74,9 @@ typedef struct game_obj
 	vector coords;
 	float rot;
 	collisionBox box;
-	collisionBox last_good;
+	void* ee_targ;
+	int ee_dir;
+	int ee_bits;
 	float* data;
 	void* prev;
 	void* next;
@@ -99,10 +101,7 @@ enum
 	PLAYER_MOVEY,
 	PLAYER_MOVEZ,
 	PLAYER_KEYS,
-	PLAYER_BULLET_TIMER,
-	PLAYER_GMX,
-	PLAYER_GMZ,
-	PLAYER_GLITCHED
+	PLAYER_BULLET_TIMER
 };
 
 /* KEY */
@@ -262,6 +261,8 @@ extern void collisionFunction(void* va, void* vb);
 extern void gc_push(game_obj* ptr);
 extern void gc_collect(void);
 extern void gc_stop(void);
+
+extern void edge_evade(game_obj* who, game_obj* what, int dir);
 
 
 #endif

@@ -28,6 +28,8 @@ void playerInit(game_obj* a)
 	a->data[PLAYER_DIRZ] = 0.0;
 	a->data[PLAYER_KEYS] = 0;
 	a->data[PLAYER_BULLET_TIMER] = 0.0f;
+	a->ee_targ = NULL;
+	a->ee_bits = 0;
 }
 
 void playerTick(game_obj* player)
@@ -147,11 +149,9 @@ void playerTick(game_obj* player)
 
 	player->data[PLAYER_ON_PLATFORM]  = 0.0;
 
-	if(!player->data[PLAYER_GLITCHED]) {
-		player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
-		player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
-		player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
-	}
+	player->data[PLAYER_X] += player->data[PLAYER_MOVEX];
+	player->data[PLAYER_Y] += player->data[PLAYER_MOVEY];
+	player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ];
 
 	/* Player collision box and movement vector */
 	player->box.min.x = (float)(player->data[PLAYER_X] - 10);
@@ -221,4 +221,14 @@ void playerDraw(game_obj* player)
                 glRotatef(player->data[PLAYER_ANGLE], 0.0f, 1.0f, 0.0f);
                 drawModelWithGL(turtleModel);
         }
+}
+
+void playerEdgeEvade(game_obj* player)
+{
+	if(player->ee_targ && player->ee_bits != 6) {
+		switch(player->ee_dir) {		
+			case 0: player->data[PLAYER_X] += player->data[PLAYER_MOVEX]; break;
+			case 1: player->data[PLAYER_Z] += player->data[PLAYER_MOVEZ]; break;
+		}
+	}
 }
