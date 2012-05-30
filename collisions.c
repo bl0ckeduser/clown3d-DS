@@ -284,6 +284,12 @@ collision_found:
 				}
 collision_found2:
 
+				if(ratio == 0.0 && (x_offs || y_offs || z_offs)) {
+					/* very rare glitch. setup the edge-evasion
+					   bits as if there was a conflict. */
+					node->ee_bits = 6;
+				}
+
 
 				/* Simple edge-evasion, based on PypeBros' suggestion. 
 				   When a collision occurs, a request is made to add the  
@@ -296,7 +302,8 @@ collision_found2:
 				if(which == 3) {
 					if(react.x == 0) {
 						/* rare glitch. setup the EE bits
-						   as if there was a conflict */
+						   as if there was a conflict to block
+						   edge-evasion */
 						node->ee_bits = 6;
 					}
 					edge_evade(node, node2, 0);
