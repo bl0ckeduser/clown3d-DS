@@ -284,6 +284,7 @@ collision_found:
 				}
 collision_found2:
 
+
 				/* Simple edge-evasion, based on PypeBros' suggestion. 
 				   When a collision occurs, a request is made to add the  
 				   the projection of the player's move vector on the "wall direction" 
@@ -293,10 +294,20 @@ collision_found2:
 				 */
 
 				if(which == 3) {
+					if(react.x == 0) {
+						/* rare glitch. setup the EE bits
+						   as if there was a conflict */
+						node->ee_bits = 6;
+					}
 					edge_evade(node, node2, 0);
 					ee = 1;
 				}
 				if(which == 1) {
+					if(react.z == 0) {
+						/* rare glitch. setup the EE bits
+						   as if there was a conflict */
+						node->ee_bits = 6;
+					}
 					edge_evade(node, node2, 1);
 					ee = 1;
 				}
