@@ -2,7 +2,7 @@
 
 CC ?= cc
 CFLAGS =-DPC_TARGET `sdl-config --cflags` -lGL -lGLU
-objects = bullet.o collisions.o door.o ds-trig.o framerate.o gc.o genBoxes.o key.o main.o mem-check.o model-data.o model-draw.o model-load.o objlist.o oop.o player.o require.o string-read.o target.o 
+objects = bullet.o collisions.o door.o ds-trig.o edge-evasion.o framerate.o gc.o genBoxes.o key.o main.o mem-check.o model-data.o model-draw.o model-load.o objlist.o oop.o player.o require.o string-read.o target.o 
 
 headers = headers.h 
 
@@ -21,6 +21,8 @@ door.o: door.c $(headers)
 	$(CC) -c -o door.o door.c $(CFLAGS)
 ds-trig.o: ds-trig.c $(headers)
 	$(CC) -c -o ds-trig.o ds-trig.c $(CFLAGS)
+edge-evasion.o: edge-evasion.c $(headers)
+	$(CC) -c -o edge-evasion.o edge-evasion.c $(CFLAGS)
 framerate.o: framerate.c $(headers)
 	$(CC) -c -o framerate.o framerate.c $(CFLAGS)
 gc.o: gc.c $(headers)
